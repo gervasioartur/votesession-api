@@ -1,0 +1,22 @@
+services:
+  votesession-database:
+    container_name: votesession-database
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - votesession-dbdata:/data/db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - votesession-network
+
+volumes:
+  votesession-dbdata:
+
+
+networks:
+  votesession-network:
+    driver: bridge
