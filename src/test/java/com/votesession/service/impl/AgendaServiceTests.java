@@ -1,6 +1,5 @@
 package com.votesession.service.impl;
 
-import java.time.LocalDateTime;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.votesession.domain.Agenda;
+import com.votesession.mocks.MocksFactory;
 import com.votesession.repository.AgendaRepository;
 import com.votesession.service.contracts.AgendaService;
 
@@ -25,18 +25,8 @@ public class AgendaServiceTests {
     @Test
     @DisplayName("Should create new agenda")
     void shouldCreateNewAgenda() {
-        Agenda agenda = Agenda
-                .builder()
-                .title("Any tittle")
-                .description("Any_Description")
-                .active(true)
-                .build();
-
-        Agenda savedAgenda = agenda;
-        savedAgenda.setId(1L);
-        savedAgenda.setActive(true);
-        savedAgenda.setCreatedAt(LocalDateTime.now());
-        savedAgenda.setUpdatedAt(LocalDateTime.now());
+        Agenda agenda = MocksFactory.agendaWithNoIdFactory();
+        Agenda savedAgenda = MocksFactory.agendaWithIdFactory(agenda);
 
         Mockito.when(this.repository.save(agenda)).thenReturn(savedAgenda);
 
