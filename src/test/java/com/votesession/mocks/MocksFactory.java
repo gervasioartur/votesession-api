@@ -1,10 +1,12 @@
 package com.votesession.mocks;
 
 import com.github.javafaker.Faker;
+import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.domain.Agenda;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class MocksFactory {
     public static final Faker faker = new Faker();
@@ -48,6 +50,21 @@ public class MocksFactory {
                 .active(true)
                 .createdAt(LocalDate.now().atStartOfDay())
                 .createdAt(LocalDate.now().atStartOfDay())
+                .build();
+    }
+
+    public static List<AgendaResponse> agendasResponseFactory(List<Agenda> agendas) {
+        return agendas.stream()
+                .map(MocksFactory::agendaResponseFactory)
+                .toList();
+    }
+
+    public static AgendaResponse agendaResponseFactory(Agenda agenda) {
+        return AgendaResponse
+                .builder()
+                .id(agenda.getId())
+                .title(agenda.getTitle())
+                .description(agenda.getDescription())
                 .build();
     }
 

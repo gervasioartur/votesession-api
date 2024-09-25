@@ -1,6 +1,7 @@
 package com.votesession.api.agennda;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.domain.Agenda;
 import com.votesession.mocks.MocksFactory;
@@ -22,6 +23,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -127,5 +130,30 @@ public class AgendaControllerTests {
 
         Mockito.verify(this.mapper, Mockito.times(1)).map(requestParams, Agenda.class);
         Mockito.verify(this.service, Mockito.times(1)).create(agenda);
+    }
+
+    @Test
+    @DisplayName("Should return 200 on read all agendas success")
+    void shouldReturn200OnReadAllAgendasSuccess() throws Exception {
+        List<Agenda> agendas = List.of(MocksFactory.agendaWithIdFactory(), MocksFactory.agendaWithIdFactory());
+
+        Mockito.when(this.service.readAll()).thenReturn(agendas);
+        Mockito.when(this.mapper.map(Mockito.any(Agenda.class), Mockito.eq(AgendaResponse.class))).thenAnswer(invocation -> {
+            Agenda agenda = invocation.getArgument(0);
+            return new AgendaResponse(agenda.getId(), agenda.getTitle(), agenda.getDescription());
+        });
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(this.URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isOk());
+
+        Mockito.verify(this.service, Mockito.times(1)).readAll();
+        Mockito.verify(this.mapper, Mockito.times(agendas.size())).map(Mockito.any(Agenda.class),
+                Mockito.eq(AgendaResponse.class));
     }
 }
