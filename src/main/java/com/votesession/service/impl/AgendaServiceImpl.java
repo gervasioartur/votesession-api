@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -74,6 +75,9 @@ public class AgendaServiceImpl implements AgendaService {
     public void vote(Vote vote) {
         if(!this.userService.isAbleToVote(vote.getUserId()))
             throw  new BusinessException("User unable to vote.");
+
+        Optional<Agenda> agenda =  this.repository.findById(vote.getAgenda().getId());
+        if(agenda.isEmpty()) throw  new NotFoundException("Unable to find agenda with id : "+ vote.getAgenda().getId());
 
         if(this.voteRepository.findByUserIdAndAgenda_Id(vote.getUserId(), vote.getAgenda().getId()).isPresent())
             throw  new ConflictException("User already voted.");
