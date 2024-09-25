@@ -11,9 +11,4 @@ public class UserServiceImpl implements UserService {
     public boolean isAbleToVote(String document) {
         return false;
     }
-
-    @Bean
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
-    }
 }
