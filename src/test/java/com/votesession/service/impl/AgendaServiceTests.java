@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.List;
+
 @SpringBootTest
 public class AgendaServiceTests {
     @Autowired
@@ -37,5 +39,21 @@ public class AgendaServiceTests {
         Assertions.assertThat(result.isActive()).isTrue();
         Assertions.assertThat(result.getCreatedAt()).isEqualTo(savedAgenda.getCreatedAt());
         Assertions.assertThat(result.getUpdatedAt()).isEqualTo(savedAgenda.getUpdatedAt());
+    }
+
+    @Test
+    @DisplayName("Should return  list of agendas")
+    void shouldReturnListOfAgendas() {
+        List<Agenda> agendas =  List.of(MocksFactory.agendaWithIdFactory(),MocksFactory.agendaWithIdFactory());
+
+        Mockito.when(this.repository.findAll()).thenReturn(agendas);
+        List<Agenda> result = this.service.readAll();
+
+        Mockito.verify(this.repository, Mockito.times(1)).findAll();
+
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result.size()).isEqualTo(agendas.size());
+        Assertions.assertThat(result.getFirst().getId()).isEqualTo(agendas.getFirst().getId());
+        Assertions.assertThat(result.getLast().getId()).isEqualTo(agendas.getLast().getId());
     }
 }
