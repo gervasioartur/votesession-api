@@ -1,7 +1,7 @@
 package com.votesession.mocks;
 
 import com.github.javafaker.Faker;
-import com.votesession.api.agneda.CreateAgendaRequest;
+import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.domain.Agenda;
 
 public class MocksFactory {
