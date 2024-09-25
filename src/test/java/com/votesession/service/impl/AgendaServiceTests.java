@@ -3,11 +3,13 @@ package com.votesession.service.impl;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
+import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.repository.AgendaRepository;
 import com.votesession.repository.VotingSessionRepository;
 import com.votesession.service.contracts.AgendaService;
+import com.votesession.service.contracts.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,9 @@ import java.util.Optional;
 public class AgendaServiceTests {
     @Autowired
     AgendaService service;
+
+    @MockBean
+    UserService userService;
 
     @MockBean
     AgendaRepository repository;
@@ -126,5 +131,20 @@ public class AgendaServiceTests {
         Mockito.verify(this.repository, Mockito.times(1)).findById(agenda.getId());
         Mockito.verify(this.votingSessionRepository, Mockito.times(1))
                 .save(Mockito.any(VotingSession.class));
+    }
+
+    @Test
+    @DisplayName("Should throw business exception if the is unable to vote")
+    void shouldThrowBusinessExceptionIfIsUnableToVote() {
+        String document = MocksFactory.faker.lorem().word();
+        String vote = MocksFactory.faker.lorem().word();
+
+        Mockito.when(this.userService.isAbleToVote(document)).thenReturn(false);
+
+        Throwable exception = Assertions.catchThrowable(() -> this.service.vote(document, vote));
+
+        Assertions.assertThat(exception).isInstanceOf(BusinessException.class);
+        Assertions.assertThat(exception.getMessage()).isEqualTo("User unable to vote.");
+        Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
     }
 }
