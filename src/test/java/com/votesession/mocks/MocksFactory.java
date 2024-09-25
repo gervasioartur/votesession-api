@@ -1,16 +1,13 @@
 package com.votesession.mocks;
 
 import com.github.javafaker.Faker;
-import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
-import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class MocksFactory {
     public static final Faker faker = new Faker();

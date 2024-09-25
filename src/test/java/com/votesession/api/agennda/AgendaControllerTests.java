@@ -3,7 +3,10 @@ package com.votesession.api.agennda;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
+import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.VotingSession;
+import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.service.contracts.AgendaService;
 import org.hamcrest.Matchers;
@@ -61,7 +64,7 @@ public class AgendaControllerTests {
         String json = new ObjectMapper().writeValueAsString(requestParams);
 
         Mockito.when(this.mapper.map(requestParams, Agenda.class)).thenReturn(agenda);
-        Mockito.doThrow(RuntimeException.class).when(this.service).create(agenda);
+        Mockito.when(this.service.create(agenda)).thenThrow(RuntimeException.class);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(this.URL)
@@ -157,28 +160,33 @@ public class AgendaControllerTests {
                 Mockito.eq(AgendaResponse.class));
     }
 
-//    @Test
-//    @DisplayName("Should return 404 if NotFoundException is thrown")
-//    void shouldReturn404IfNotFoundExceptionIsThrown() throws Exception {
-//        OpenVotingSessionRequest requestParams = MocksFactory.openVotingSessionRequestFactory();
-//
-//        String json = new ObjectMapper().writeValueAsString(requestParams);
-//
-//        Mockito.doThrow(RuntimeException.class).when(this.service).openSession(requestParams);
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .post(this.URL)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(json);
-//
-//        mvc
-//                .perform(request)
-//                .andExpect(status().isInternalServerError())
-//                .andExpect(jsonPath("body",
-//                        Matchers.is("An unexpected error occurred. Please try again later.")));
-//
-//        Mockito.verify(this.mapper, Mockito.times(1)).map(requestParams, Agenda.class);
-//        Mockito.verify(this.service, Mockito.times(1)).create(agenda);
-//    }
+    @Test
+    @DisplayName("Should return 404 if NotFoundException is thrown on open session")
+    void shouldReturn404IfNotFoundExceptionIsThrownOnOpenSession() throws Exception {
+        long agendaId = MocksFactory.faker.number().randomNumber();
+        OpenVotingSessionRequest requestParams = OpenVotingSessionRequest
+                .builder()
+                .duration((int) MocksFactory.faker.number().randomNumber())
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.when(this.service.openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration())))
+                .thenThrow(new NotFoundException("Could not find agenda with id "+ agendaId));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL+"/"+agendaId+"/session")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("body",
+                        Matchers.is("Could not find agenda with id "+ agendaId)));
+
+       Mockito.verify(this.service, Mockito.times(1))
+                .openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration()));
+    }
 }
