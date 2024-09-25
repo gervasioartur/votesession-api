@@ -1,6 +1,5 @@
 package com.votesession.service.contracts;
 
-import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 
@@ -11,5 +10,5 @@ public interface AgendaService {
 
     List<Agenda> readAll();
 
-    VotingSession openSession(OpenVotingSessionRequest request);
+    VotingSession openSession(VotingSession votingSession, int duration);
 }

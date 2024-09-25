@@ -1,6 +1,5 @@
 package com.votesession.service.impl;
 
-import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
@@ -69,38 +68,39 @@ public class AgendaServiceTests {
     @Test
     @DisplayName("Should throw NotFound if agenda does not exist in the system on open voting session")
     void shouldThrowNotFoundIfAgendaDoesNotExistInTheSystemOnOpenVotingSession() {
-        OpenVotingSessionRequest request = MocksFactory.openVotingSessionRequestFactory();
+        int duration = (int) MocksFactory.faker.number().randomNumber();
+        VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(duration);
 
-        Mockito.when(repository.findById(request.getAgendaId())).thenReturn(Optional.empty());
+        Mockito.when(repository.findById(votingSession.getAgenda().getId())).thenReturn(Optional.empty());
 
-        Throwable exception = Assertions.catchThrowable(() -> this.service.openSession(request));
+        Throwable exception = Assertions.catchThrowable(() -> this.service.openSession(votingSession, duration));
 
         Assertions.assertThat(exception).isInstanceOf(NotFoundException.class);
         Assertions.assertThat(exception.getMessage()).isEqualTo(
-                "Could not find agenda with id " + request.getAgendaId());
-        Mockito.verify(repository, Mockito.times(1)).findById(request.getAgendaId());
+                "Could not find agenda with id " + votingSession.getAgenda().getId());
+        Mockito.verify(repository, Mockito.times(1))
+                .findById(votingSession.getAgenda().getId());
     }
 
     @Test
     @DisplayName("Should open session with default duration time if duration is not set")
     void ShouldOpenSessionWithDefaultDurationTimeIfDurationIsNotSet() {
-        OpenVotingSessionRequest request = MocksFactory.openVotingSessionRequestFactory();
-        request.setDuration(0);
+        int duration = 0;
+        VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(duration);
+        Agenda agenda = votingSession.getAgenda();
 
-        Agenda agenda = MocksFactory.agendaWithIdFactory();
-        VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(request, agenda);
         VotingSession savedVotingSession = MocksFactory.votingSessionWithIdFactory(votingSession);
 
-        Mockito.when(repository.findById(request.getAgendaId())).thenReturn(Optional.of(agenda));
+        Mockito.when(repository.findById(votingSession.getAgenda().getId())).thenReturn(Optional.of(agenda));
         Mockito.when(votingSessionRepository.save(Mockito.any(VotingSession.class))).thenReturn(savedVotingSession);
 
-        VotingSession result = this.service.openSession(request);
+        VotingSession result = this.service.openSession(votingSession, duration);
 
         int difference = result.getEndDate().compareTo(result.getStartDate());
         Assertions.assertThat(result).isNotNull();
-        Assertions.assertThat(request.getDuration()).isEqualTo(0);
+        Assertions.assertThat(duration).isEqualTo(0);
         Assertions.assertThat(difference).isEqualTo(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue());
-        Mockito.verify(this.repository, Mockito.times(1)).findById(request.getAgendaId());
+        Mockito.verify(this.repository, Mockito.times(1)).findById(agenda.getId());
         Mockito.verify(this.votingSessionRepository, Mockito.times(1))
                 .save(Mockito.any(VotingSession.class));
     }
@@ -108,22 +108,22 @@ public class AgendaServiceTests {
     @Test
     @DisplayName("Should open session with informed duration time if duration is not set")
     void ShouldOpenSessionInformedDurationTimeIfDurationIsNotSet() {
-        OpenVotingSessionRequest request = MocksFactory.openVotingSessionRequestFactory();
+        int duration = MocksFactory.faker.number().numberBetween(1, Integer.MAX_VALUE);
+        VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(duration);
+        Agenda agenda = votingSession.getAgenda();
 
-        Agenda agenda = MocksFactory.agendaWithIdFactory();
-        VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(request, agenda);
         VotingSession savedVotingSession = MocksFactory.votingSessionWithIdFactory(votingSession);
 
-        Mockito.when(repository.findById(request.getAgendaId())).thenReturn(Optional.of(agenda));
+        Mockito.when(repository.findById(votingSession.getAgenda().getId())).thenReturn(Optional.of(agenda));
         Mockito.when(votingSessionRepository.save(Mockito.any(VotingSession.class))).thenReturn(savedVotingSession);
 
-        VotingSession result = this.service.openSession(request);
+        VotingSession result = this.service.openSession(votingSession, duration);
 
         int difference = result.getEndDate().compareTo(result.getStartDate());
         Assertions.assertThat(result).isNotNull();
-        Assertions.assertThat(request.getDuration()).isGreaterThan(0);
+        Assertions.assertThat(duration).isGreaterThan(0);
         Assertions.assertThat(difference).isGreaterThan(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue());
-        Mockito.verify(this.repository, Mockito.times(1)).findById(request.getAgendaId());
+        Mockito.verify(this.repository, Mockito.times(1)).findById(agenda.getId());
         Mockito.verify(this.votingSessionRepository, Mockito.times(1))
                 .save(Mockito.any(VotingSession.class));
     }

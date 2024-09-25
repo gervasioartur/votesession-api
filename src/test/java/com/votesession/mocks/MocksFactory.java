@@ -76,6 +76,17 @@ public class MocksFactory {
         return new CreateAgendaRequest(faker.lorem().word(), faker.lorem().paragraph());
     }
 
+    public static VotingSession votingSessionWithNoIdFactory(int duration) {
+        duration = duration == 0 ? GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() : duration;
+        return VotingSession
+                .builder()
+                .agenda(MocksFactory.agendaWithIdFactory())
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusMinutes(duration))
+                .active(true)
+                .build();
+    }
+
     public static VotingSession votingSessionWithNoIdFactory(OpenVotingSessionRequest request, Agenda agenda) {
         int duration = request.getDuration() == 0 ?
                 GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() : request.getDuration();

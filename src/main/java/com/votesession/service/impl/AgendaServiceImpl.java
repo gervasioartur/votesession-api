@@ -1,6 +1,5 @@
 package com.votesession.service.impl;
 
-import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
@@ -34,24 +33,19 @@ public class AgendaServiceImpl implements AgendaService {
     }
 
     @Override
-    public VotingSession openSession(OpenVotingSessionRequest request) {
+    public VotingSession openSession(VotingSession votingSession, int duration) {
         Agenda agenda = this.repository
-                .findById(request.getAgendaId()).
+                .findById(votingSession.getAgenda().getId()).
                 orElseThrow(() -> new NotFoundException
-                        ("Could not find agenda with id " + request.getAgendaId()));
+                        ("Could not find agenda with id " + votingSession.getAgenda().getId()));
 
         LocalDateTime now = LocalDateTime.now();
-        int duration = request.getDuration() == 0 ?
-                GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() :
-                request.getDuration();
+        duration = duration == 0 ? GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() : duration;
 
-        VotingSession votingSession = VotingSession
-                .builder()
-                .agenda(agenda)
-                .startDate(now)
-                .endDate(now.plusMinutes(duration))
-                .active(true)
-                .build();
+        votingSession.setActive(true);
+        votingSession.setAgenda(agenda);
+        votingSession.setStartDate(now);
+        votingSession.setEndDate(now.plusMinutes(duration));
         return this.votingSessionRepository.save(votingSession);
     }
 }

@@ -157,14 +157,14 @@ public class AgendaControllerTests {
                 Mockito.eq(AgendaResponse.class));
     }
 
-    //    @Test
+//    @Test
 //    @DisplayName("Should return 404 if NotFoundException is thrown")
 //    void shouldReturn404IfNotFoundExceptionIsThrown() throws Exception {
 //        OpenVotingSessionRequest requestParams = MocksFactory.openVotingSessionRequestFactory();
 //
 //        String json = new ObjectMapper().writeValueAsString(requestParams);
 //
-//        Mockito.doThrow(RuntimeException.class).when(this.service).create(agenda);
+//        Mockito.doThrow(RuntimeException.class).when(this.service).openSession(requestParams);
 //
 //        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
 //                .post(this.URL)
