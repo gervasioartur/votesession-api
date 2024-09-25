@@ -37,8 +37,8 @@ public class AgendaController {
     public ResponseEntity<Response> create(@Valid @RequestBody CreateAgendaRequest request) {
         Agenda agenda = this.mapper.map(request, Agenda.class);
         this.service.create(agenda);
-        Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.name(),
+        Response response = new Response(HttpStatus.CREATED.value(),
+                HttpStatus.CREATED.name(),
                 "Created.");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
