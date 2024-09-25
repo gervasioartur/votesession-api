@@ -11,4 +11,6 @@ public interface AgendaService {
     List<Agenda> readAll();
 
     VotingSession openSession(VotingSession votingSession, int duration);
+
+    void vote(String document, String vote);
 }
