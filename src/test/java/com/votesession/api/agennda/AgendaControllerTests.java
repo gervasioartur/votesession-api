@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -191,12 +192,12 @@ public class AgendaControllerTests {
     }
 
     @Test
-    @DisplayName("Should return 200 on open session success")
-    void shouldReturn200OnOpenSessionSuccess() throws Exception {
+    @DisplayName("Should return 400 if duration is less than 0")
+    void shouldReturn400IfDurationIsLessThan0() throws Exception {
         long agendaId = MocksFactory.faker.number().randomNumber();
         OpenVotingSessionRequest requestParams = OpenVotingSessionRequest
                 .builder()
-                .duration((int) MocksFactory.faker.number().randomNumber())
+                .duration(-1)
                 .build();
 
         VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(requestParams.getDuration());
@@ -215,10 +216,47 @@ public class AgendaControllerTests {
 
         mvc
                 .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("body",
+                        Matchers.is("The duration must be equal to or greater than zero.")));
+
+        Mockito.verify(this.service, Mockito.times(0))
+                .openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration()));
+    }
+
+    @Test
+    @DisplayName("Should return 200 on open session success")
+    void shouldReturn200OnOpenSessionSuccess() throws Exception {
+        long agendaId = MocksFactory.faker.number().randomNumber();
+        OpenVotingSessionRequest requestParams = OpenVotingSessionRequest
+                .builder()
+                .duration((int) MocksFactory.faker.number().randomNumber())
+                .build();
+
+        VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(requestParams.getDuration());
+        votingSession.setId(agendaId);
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.when(this.service.openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration())))
+                .thenReturn(votingSession);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'at time' HH:mm");
+        String formattedStartDate = votingSession.getStartDate().format(formatter);
+        String formattedEndDate = votingSession.getEndDate().format(formatter);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + agendaId + "/session")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("body",
-                        Matchers.is("Voting opened successfully, it starts on : "
-                                + votingSession.getStartDate() + " and ends on : " + votingSession.getEndDate())));
+                        Matchers.is("Voting opened successfully, it starts on  "
+                                + formattedStartDate + " and ends on  " + formattedEndDate)));
 
         Mockito.verify(this.service, Mockito.times(1))
                 .openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration()));
