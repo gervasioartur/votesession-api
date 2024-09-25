@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
@@ -43,5 +44,26 @@ public class UserServiceImplTests {
         boolean result = this.service.isAbleToVote("12345678909");
 
         assertFalse(result);
+    }
+
+    @Test
+    @DisplayName("Should return true if user document is valid")
+    void shouldReturnTruIfUserDocumentIsValid() {
+        WebClient webClient = Mockito.mock(WebClient.class);
+        WebClient.RequestHeadersUriSpec uriSpec = Mockito.mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.ResponseSpec responseSpec = Mockito.mock(WebClient.ResponseSpec.class);
+
+        Mockito.when(webClientBuilder.build()).thenReturn(webClient);
+        Mockito.when(webClient.get()).thenReturn(uriSpec);
+        Mockito.when(uriSpec.uri(anyString())).thenReturn(uriSpec);
+        Mockito.when(uriSpec.retrieve()).thenReturn(responseSpec);
+
+        InverterTextoApiResponse fakeResponse = new InverterTextoApiResponse(true, MocksFactory.faker.lorem().word());
+        Mockito.when(responseSpec.bodyToMono(InverterTextoApiResponse.class)).thenReturn(Mono.just(fakeResponse));
+
+
+        boolean result = this.service.isAbleToVote("12345678909");
+
+        assertTrue(result);
     }
 }
