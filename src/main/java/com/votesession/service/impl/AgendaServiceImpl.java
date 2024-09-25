@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -29,7 +30,20 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public List<Agenda> readAll() {
-        return this.repository.findAll();
+        LocalDateTime now = LocalDateTime.now();
+        return this.repository.findAll()
+                .stream()
+                .map(agenda -> {
+                    List<VotingSession> activeVotingSessions = agenda.getVotingSessions() != null ?
+                            agenda.getVotingSessions()
+                                    .stream()
+                                    .filter(votingSession -> votingSession.getEndDate().isAfter(now))
+                                    .toList()
+                            : List.of();
+                    agenda.setVotingSessions(new HashSet<>(activeVotingSessions));
+                    return agenda;
+                })
+                .toList();
     }
 
     @Override

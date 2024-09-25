@@ -15,5 +15,5 @@ public class AgendaResponse {
     private Long id;
     private String title;
     private String description;
-    private List<VotingSessionResponse> votingSessions;
+    private List<VotingSessionResponse> openedVotingSessions;
 }

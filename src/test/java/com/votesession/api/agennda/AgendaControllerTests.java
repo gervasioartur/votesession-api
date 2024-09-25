@@ -147,7 +147,10 @@ public class AgendaControllerTests {
             Agenda agenda = invocation.getArgument(0);
             List<VotingSessionResponse> votingSessionsResponse = agenda.getVotingSessions()
                     .stream()
-                    .map(votingSession -> new VotingSessionResponse(votingSession.getId(), votingSession.getStartDate(), votingSession.getEndDate()))
+                    .map(votingSession -> new VotingSessionResponse(
+                            votingSession.getId(),
+                            votingSession.getStartDate(),
+                            votingSession.getEndDate()))
                     .toList();
             return new AgendaResponse(agenda.getId(), agenda.getTitle(), agenda.getDescription(), votingSessionsResponse);
         });

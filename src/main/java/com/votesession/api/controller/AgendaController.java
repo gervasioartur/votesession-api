@@ -59,7 +59,7 @@ public class AgendaController {
                             .map(votingSession -> mapper.map(votingSession, VotingSessionResponse.class))
                             .toList();
                     AgendaResponse agendaResponse = mapper.map(agenda, AgendaResponse.class);
-                    agendaResponse.setVotingSessions(votingSessionsResponse);
+                    agendaResponse.setOpenedVotingSessions(votingSessionsResponse);
 
                     return agendaResponse;
                 })
