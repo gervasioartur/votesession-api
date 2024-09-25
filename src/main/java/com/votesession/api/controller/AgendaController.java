@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -79,10 +80,15 @@ public class AgendaController {
                 .build();
 
         votingSession = this.service.openSession(votingSession, request.getDuration());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'at time' HH:mm");
+        String formattedStartDate = votingSession.getStartDate().format(formatter);
+        String formattedEndDate = votingSession.getEndDate().format(formatter);
+
         Response response = new Response(HttpStatus.OK.value(),
                 HttpStatus.OK.name(),
-                "Voting opened successfully, it starts on : "
-                        + votingSession.getStartDate() + " and ends on : " + votingSession.getEndDate());
+                "Voting opened successfully, it starts on  "
+                        + formattedStartDate + " and ends on  " + formattedEndDate);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
