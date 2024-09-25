@@ -7,7 +7,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -15,20 +14,20 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "t_agendas")
-public class Agenda implements Serializable {
+@Table(name = "t_voting_sessions")
+public class VotingSession implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Agenda agenda;
 
-    private String description;
+    private LocalDateTime startDate;
 
-    @OneToMany( mappedBy = "agenda",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private Set<VotingSession> votingSessions;
+    private LocalDateTime endDate;
 
     @Column(name = "is_active")
     private boolean active;
