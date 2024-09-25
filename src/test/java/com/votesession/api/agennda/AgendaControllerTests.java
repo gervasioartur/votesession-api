@@ -106,7 +106,7 @@ public class AgendaControllerTests {
     void shouldReturn201OnCreateAgendaSuccess() throws Exception {
         CreateAgendaRequest requestParams = MocksFactory.createAgendaRequestFactory();
         Agenda agenda = MocksFactory.agendaWithNoIdFactory(requestParams);
-        Agenda savedAgenda =  MocksFactory.agendaWithIdFactory(agenda);
+        Agenda savedAgenda = MocksFactory.agendaWithIdFactory(agenda);
 
         String json = new ObjectMapper().writeValueAsString(requestParams);
 
