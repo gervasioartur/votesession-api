@@ -101,4 +101,31 @@ public class AgendaControllerTests {
         Mockito.verify(this.service, Mockito.times(0)).create(agenda);
     }
 
+    @Test
+    @DisplayName("Should return 201 on create agenda success")
+    void shouldReturn201OnCreateAgendaSuccess() throws Exception {
+        CreateAgendaRequest requestParams = MocksFactory.createAgendaRequestFactory();
+        Agenda agenda = MocksFactory.agendaWithNoIdFactory(requestParams);
+        Agenda savedAgenda =  MocksFactory.agendaWithIdFactory(agenda);
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.when(this.mapper.map(requestParams, Agenda.class)).thenReturn(agenda);
+        Mockito.when(this.service.create(agenda)).thenReturn(savedAgenda);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("body",
+                        Matchers.is("Created.")));
+
+        Mockito.verify(this.mapper, Mockito.times(1)).map(requestParams, Agenda.class);
+        Mockito.verify(this.service, Mockito.times(1)).create(agenda);
+    }
 }
