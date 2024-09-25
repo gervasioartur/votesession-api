@@ -5,8 +5,10 @@ import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
 import com.votesession.domain.exception.BusinessException;
+import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.repository.AgendaRepository;
+import com.votesession.repository.VoteRepository;
 import com.votesession.repository.VotingSessionRepository;
 import com.votesession.service.contracts.AgendaService;
 import com.votesession.service.contracts.UserService;
@@ -25,6 +27,7 @@ public class AgendaServiceImpl implements AgendaService {
     private final AgendaRepository repository;
     private final VotingSessionRepository votingSessionRepository;
     private final UserService userService;
+    private final VoteRepository voteRepository;
 
     @Override
     public Agenda create(Agenda agenda) {
@@ -71,5 +74,8 @@ public class AgendaServiceImpl implements AgendaService {
     public void vote(Vote vote) {
         if(!this.userService.isAbleToVote(vote.getUserId()))
             throw  new BusinessException("User unable to vote.");
+
+        if(this.voteRepository.findByUserIdAndAgenda_Id(vote.getUserId(), vote.getAgenda().getId()).isPresent())
+            throw  new ConflictException("User already voted.");
     }
 }
