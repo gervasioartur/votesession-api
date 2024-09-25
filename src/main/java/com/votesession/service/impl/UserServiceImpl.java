@@ -16,10 +16,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isAbleToVote(String document) {
-        final String  URI = "https://api.invertexto.com/v1/validator"
-                            +"?token="+this.inverterTextoApiToken
-                            +"&value="+document
-                            +"&type=cpf";
+        final String URI = "https://api.invertexto.com/v1/validator"
+                + "?token=" + this.inverterTextoApiToken
+                + "&value=" + document
+                + "&type=cpf";
 
         InverterTextoApiResponse response = this.webClientBuilder.build()
                 .get()
