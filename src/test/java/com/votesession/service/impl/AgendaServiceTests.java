@@ -155,6 +155,24 @@ public class AgendaServiceTests {
     }
 
     @Test
+    @DisplayName("Should throw NotFound Exception if agenda does not exist on vote")
+    void shouldThrowNotFoundExceptionIfAgendaDoesNotExistVote() {
+        String document = MocksFactory.faker.lorem().word();
+        Vote vote =  MocksFactory.voteWithNoIdFactory(document);
+
+        Mockito.when(this.userService.isAbleToVote(document)).thenReturn(true);
+        Mockito.when(this.repository.findById(vote.getAgenda().getId()))
+                .thenReturn(Optional.empty());
+
+        Throwable exception = Assertions.catchThrowable(() -> this.service.vote(vote));
+
+        Assertions.assertThat(exception).isInstanceOf(NotFoundException.class);
+        Assertions.assertThat(exception.getMessage())
+                .isEqualTo("Unable to find agenda with id : " + vote.getAgenda().getId());
+        Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
+    }
+
+    @Test
     @DisplayName("Should throw Conflict exception if user as already voted")
     void shouldThrowConflictExceptionIfUserAsAlreadyVoted() {
         String document = MocksFactory.faker.lorem().word();
