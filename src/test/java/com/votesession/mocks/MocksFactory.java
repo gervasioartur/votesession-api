@@ -8,6 +8,9 @@ import com.votesession.domain.enums.GeneralIntEnum;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MocksFactory {
     public static final Faker faker = new Faker();
@@ -43,7 +46,7 @@ public class MocksFactory {
     }
 
     public static Agenda agendaWithIdFactory() {
-        return Agenda
+        Agenda agenda = Agenda
                 .builder()
                 .id(faker.random().nextLong())
                 .title(faker.lorem().word())
@@ -52,6 +55,11 @@ public class MocksFactory {
                 .createdAt(LocalDate.now().atStartOfDay())
                 .createdAt(LocalDate.now().atStartOfDay())
                 .build();
+
+        Set<VotingSession> votingSessions = new HashSet<>(List.of(MocksFactory.votingSessionWithIdFactory(agenda)
+                , MocksFactory.votingSessionWithIdFactory(agenda)));
+        agenda.setVotingSessions(votingSessions);
+        return agenda;
     }
 
     public static CreateAgendaRequest createAgendaRequestFactory() {
@@ -76,6 +84,19 @@ public class MocksFactory {
                 .agenda(votingSession.getAgenda())
                 .startDate(votingSession.getStartDate())
                 .endDate(votingSession.getEndDate())
+                .active(true)
+                .createdAt(LocalDate.now().atStartOfDay())
+                .createdAt(LocalDate.now().atStartOfDay())
+                .build();
+    }
+
+    public static VotingSession votingSessionWithIdFactory(Agenda agenda) {
+        return VotingSession
+                .builder()
+                .id(faker.random().nextLong())
+                .agenda(agenda)
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(faker.random().nextInt(10)))
                 .active(true)
                 .createdAt(LocalDate.now().atStartOfDay())
                 .createdAt(LocalDate.now().atStartOfDay())

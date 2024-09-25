@@ -1,9 +1,6 @@
 package com.votesession.api.controller;
 
-import com.votesession.api.dto.AgendaResponse;
-import com.votesession.api.dto.CreateAgendaRequest;
-import com.votesession.api.dto.OpenVotingSessionRequest;
-import com.votesession.api.dto.Response;
+import com.votesession.api.dto.*;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.service.contracts.AgendaService;
@@ -56,7 +53,16 @@ public class AgendaController {
         List<Agenda> agendas = this.service.readAll();
         List<AgendaResponse> agendasResponse = agendas
                 .stream()
-                .map(element -> mapper.map(element, AgendaResponse.class))
+                .map(agenda -> {
+                    List<VotingSessionResponse> votingSessionsResponse = agenda.getVotingSessions()
+                            .stream()
+                            .map(votingSession -> mapper.map(votingSession, VotingSessionResponse.class))
+                            .toList();
+                    AgendaResponse agendaResponse = mapper.map(agenda, AgendaResponse.class);
+                    agendaResponse.setOpenedVotingSessions(votingSessionsResponse);
+
+                    return agendaResponse;
+                })
                 .toList();
 
         Response response = new Response(HttpStatus.OK.value(),

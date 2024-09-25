@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.api.dto.OpenVotingSessionRequest;
+import com.votesession.api.dto.VotingSessionResponse;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.exception.NotFoundException;
@@ -144,8 +145,16 @@ public class AgendaControllerTests {
         Mockito.when(this.service.readAll()).thenReturn(agendas);
         Mockito.when(this.mapper.map(Mockito.any(Agenda.class), Mockito.eq(AgendaResponse.class))).thenAnswer(invocation -> {
             Agenda agenda = invocation.getArgument(0);
-            return new AgendaResponse(agenda.getId(), agenda.getTitle(), agenda.getDescription());
+            List<VotingSessionResponse> votingSessionsResponse = agenda.getVotingSessions()
+                    .stream()
+                    .map(votingSession -> new VotingSessionResponse(
+                            votingSession.getId(),
+                            votingSession.getStartDate(),
+                            votingSession.getEndDate()))
+                    .toList();
+            return new AgendaResponse(agenda.getId(), agenda.getTitle(), agenda.getDescription(), votingSessionsResponse);
         });
+        ;
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(this.URL)
