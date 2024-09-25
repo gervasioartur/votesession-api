@@ -5,6 +5,7 @@ import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
 import com.votesession.domain.exception.BusinessException;
+import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.repository.AgendaRepository;
@@ -151,5 +152,26 @@ public class AgendaServiceTests {
         Assertions.assertThat(exception).isInstanceOf(BusinessException.class);
         Assertions.assertThat(exception.getMessage()).isEqualTo("User unable to vote.");
         Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
+    }
+
+    @Test
+    @DisplayName("Should throw Conflict exception if user as already voted")
+    void shouldThrowConflictExceptionIfUserAsAlreadyVoted() {
+        String document = MocksFactory.faker.lorem().word();
+        Vote vote = MocksFactory.voteWithNoIdFactory(document);
+
+        Vote savedVote = MocksFactory.voteWithIdFactory(vote);
+
+        Mockito.when(this.userService.isAbleToVote(document)).thenReturn(true);
+        Mockito.when(this.voteRepository
+                .findByUserIdAndAgenda_Id(document,vote.getAgenda().getId())).thenReturn(Optional.of(savedVote));
+
+        Throwable exception = Assertions.catchThrowable(() -> this.service.vote(vote));
+
+        Assertions.assertThat(exception).isInstanceOf(ConflictException.class);
+        Assertions.assertThat(exception.getMessage()).isEqualTo("User already voted.");
+        Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
+        Mockito.verify(this.voteRepository, Mockito.times(1))
+                .findByUserIdAndAgenda_Id(document,vote.getAgenda().getId());
     }
 }
