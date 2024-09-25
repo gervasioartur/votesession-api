@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @Tag(name = "Agendas")
+@RequiredArgsConstructor
 @RequestMapping("/agendas")
 public class AgendaController {
     private final AgendaService service;

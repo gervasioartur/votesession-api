@@ -156,4 +156,29 @@ public class AgendaControllerTests {
         Mockito.verify(this.mapper, Mockito.times(agendas.size())).map(Mockito.any(Agenda.class),
                 Mockito.eq(AgendaResponse.class));
     }
+
+    //    @Test
+//    @DisplayName("Should return 404 if NotFoundException is thrown")
+//    void shouldReturn404IfNotFoundExceptionIsThrown() throws Exception {
+//        OpenVotingSessionRequest requestParams = MocksFactory.openVotingSessionRequestFactory();
+//
+//        String json = new ObjectMapper().writeValueAsString(requestParams);
+//
+//        Mockito.doThrow(RuntimeException.class).when(this.service).create(agenda);
+//
+//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+//                .post(this.URL)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(json);
+//
+//        mvc
+//                .perform(request)
+//                .andExpect(status().isInternalServerError())
+//                .andExpect(jsonPath("body",
+//                        Matchers.is("An unexpected error occurred. Please try again later.")));
+//
+//        Mockito.verify(this.mapper, Mockito.times(1)).map(requestParams, Agenda.class);
+//        Mockito.verify(this.service, Mockito.times(1)).create(agenda);
+//    }
 }
