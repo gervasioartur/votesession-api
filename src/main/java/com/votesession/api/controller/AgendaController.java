@@ -1,5 +1,6 @@
 package com.votesession.api.controller;
 
+import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.api.dto.Response;
 import com.votesession.domain.Agenda;
@@ -14,10 +15,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,5 +41,24 @@ public class AgendaController {
                 HttpStatus.CREATED.name(),
                 "Created.");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Read all Agendas")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns a all Agendas"),
+            @ApiResponse(responseCode = "500", description = "An unexpected error occurred."),
+    })
+    public ResponseEntity<Response> readAll() {
+        List<Agenda> agendas = this.service.readAll();
+        List<AgendaResponse> agendasResponse = agendas
+                .stream()
+                .map(element -> mapper.map(element, AgendaResponse.class))
+                .toList();
+
+        Response response = new Response(HttpStatus.OK.value(),
+                HttpStatus.OK.name(),
+                agendasResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
