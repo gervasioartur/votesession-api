@@ -1,9 +1,16 @@
 package com.votesession.api.agennda;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.votesession.api.dto.CreateAgendaRequest;
+import com.votesession.domain.Agenda;
+import com.votesession.mocks.MocksFactory;
+import com.votesession.service.contracts.AgendaService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +22,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.votesession.api.agneda.CreateAgendaRequest;
-import com.votesession.domain.Agenda;
-import com.votesession.mocks.MocksFactory;
-import com.votesession.service.contracts.AgendaService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,7 +51,7 @@ public class AgendaControllerTests {
 
     @Test
     @DisplayName("Should return 500 if an unexpected exception is thrown")
-    void shouldReturn500IfUnexpectedExceptionIsThrwon() throws Exception {
+    void shouldReturn500IfUnexpectedExceptionIsThrown() throws Exception {
         CreateAgendaRequest requestParams = MocksFactory.createAgendaRequestFactory();
         Agenda agenda = MocksFactory.agendaWithNoIdFactory(requestParams);
 
@@ -73,6 +74,31 @@ public class AgendaControllerTests {
 
         Mockito.verify(this.mapper, Mockito.times(1)).map(requestParams, Agenda.class);
         Mockito.verify(this.service, Mockito.times(1)).create(agenda);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @DisplayName("Should return 400 if title is empty or null empty")
+    void shouldReturn400IfTitleIsEmptyOrNullOrEmpty(String title) throws Exception {
+        CreateAgendaRequest requestParams = new CreateAgendaRequest(title, "any_description");
+        Agenda agenda = MocksFactory.agendaWithNoIdFactory(requestParams);
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("body",
+                        Matchers.is("Title is required.")));
+
+        Mockito.verify(this.mapper, Mockito.times(0)).map(requestParams, Agenda.class);
+        Mockito.verify(this.service, Mockito.times(0)).create(agenda);
     }
 
 }
