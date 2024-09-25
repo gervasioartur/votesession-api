@@ -19,8 +19,8 @@ public class MocksFactory {
     public static Agenda agendaWithNoIdFactory(CreateAgendaRequest request) {
         return Agenda
                 .builder()
-                .title(request.title())
-                .description(request.description())
+                .title(request.getTitle())
+                .description(request.getDescription())
                 .active(true)
                 .build();
     }
