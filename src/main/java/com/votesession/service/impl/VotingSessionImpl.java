@@ -1,5 +1,6 @@
 package com.votesession.service.impl;
 
+import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.exception.NotFoundException;
@@ -16,11 +17,11 @@ public class VotingSessionImpl implements VotingSessionService {
     private final AgendaRepository agendaRepository;
 
     @Override
-    public VotingSession open(VotingSession votingSession) {
+    public VotingSession open(OpenVotingSessionRequest request) {
         this.agendaRepository
-                .findById(votingSession.getAgenda().getId()).
+                .findById(request.getAgendaId()).
                 orElseThrow(() -> new NotFoundException
-                        ("Could not find agenda with id " + votingSession.getAgenda().getId()));
+                        ("Could not find agenda with id " + request.getAgendaId()));
         return null;
     }
 }

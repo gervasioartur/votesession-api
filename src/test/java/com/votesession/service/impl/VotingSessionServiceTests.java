@@ -1,6 +1,6 @@
 package com.votesession.service.impl;
 
-import com.votesession.domain.entity.VotingSession;
+import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.repository.AgendaRepository;
@@ -30,15 +30,15 @@ public class VotingSessionServiceTests {
     @Test
     @DisplayName("Should throw NotFound if agenda does not exist in the system on open voting session")
     void shouldThrowNotFoundIfAgendaDoesNotExistInTheSystemOnOpenVotingSession() {
-        VotingSession session = MocksFactory.votingSessionWithNoIdFactory();
+        OpenVotingSessionRequest request = MocksFactory.openVotingSessionRequestFactory();
 
-        Mockito.when(agendaRepository.findById(session.getAgenda().getId())).thenReturn(Optional.empty());
+        Mockito.when(agendaRepository.findById(request.getAgendaId())).thenReturn(Optional.empty());
 
-        Throwable  exception = Assertions.catchThrowable(() -> this.service.open(session));
+        Throwable  exception = Assertions.catchThrowable(() -> this.service.open(request));
 
         Assertions.assertThat(exception).isInstanceOf(NotFoundException.class);
         Assertions.assertThat(exception.getMessage()).isEqualTo(
-                "Could not find agenda with id " + session.getAgenda().getId());
-        Mockito.verify(agendaRepository, Mockito.times(1)).findById(session.getAgenda().getId());
+                "Could not find agenda with id " + request.getAgendaId());
+        Mockito.verify(agendaRepository, Mockito.times(1)).findById(request.getAgendaId());
     }
 }

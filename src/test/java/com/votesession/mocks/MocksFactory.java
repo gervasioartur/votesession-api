@@ -3,6 +3,7 @@ package com.votesession.mocks;
 import com.github.javafaker.Faker;
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
+import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
 
@@ -84,4 +85,11 @@ public class MocksFactory {
                 .build();
     }
 
+    public static OpenVotingSessionRequest openVotingSessionRequestFactory() {
+        return OpenVotingSessionRequest
+                .builder()
+                .agendaId(agendaWithIdFactory().getId())
+                .duration((int) faker.number().randomNumber())
+                .build();
+    }
 }
