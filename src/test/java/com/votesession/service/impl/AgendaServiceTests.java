@@ -196,4 +196,26 @@ public class AgendaServiceTests {
                 .findByUserIdAndAgenda_Id(document,vote.getAgenda().getId());
         Mockito.verify(this.repository, Mockito.times(1)).findById(vote.getAgenda().getId());
     }
+
+    @Test
+    @DisplayName("Should save user vote")
+    void shouldSaveUserVote(){
+        String document = MocksFactory.faker.lorem().word();
+        Vote vote = MocksFactory.voteWithNoIdFactory(document);
+
+        Mockito.when(this.userService.isAbleToVote(document)).thenReturn(true);
+        Mockito.when(this.repository.findById(vote.getAgenda().getId())).thenReturn(Optional.of(vote.getAgenda()));
+
+        Mockito.when(this.voteRepository
+                .findByUserIdAndAgenda_Id(document,vote.getAgenda().getId())).thenReturn(Optional.empty());
+
+         this.service.vote(vote);
+
+
+        Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
+        Mockito.verify(this.voteRepository, Mockito.times(1))
+                .findByUserIdAndAgenda_Id(document,vote.getAgenda().getId());
+        Mockito.verify(this.repository, Mockito.times(1)).findById(vote.getAgenda().getId());
+        Mockito.verify(this.voteRepository, Mockito.times(1)).save(Mockito.any(Vote.class));
+    }
 }
