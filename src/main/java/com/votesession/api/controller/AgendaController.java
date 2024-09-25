@@ -78,7 +78,11 @@ public class AgendaController {
                 .agenda(Agenda.builder().id(agendaId).build())
                 .build();
 
-        this.service.openSession(votingSession, request.getDuration());
-        return null;
+        votingSession = this.service.openSession(votingSession, request.getDuration());
+        Response response = new Response(HttpStatus.OK.value(),
+                HttpStatus.OK.name(),
+                "Voting opened successfully, it starts on : "
+                        + votingSession.getStartDate() + " and ends on : " + votingSession.getEndDate());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
