@@ -105,8 +105,8 @@ public class MocksFactory {
     }
 
 
-    public static Vote voteWithNoIdFactory (String document) {
-        return  Vote
+    public static Vote voteWithNoIdFactory(String document) {
+        return Vote
                 .builder()
                 .userId(document)
                 .agenda(MocksFactory.agendaWithIdFactory())
@@ -114,8 +114,8 @@ public class MocksFactory {
                 .build();
     }
 
-    public static Vote voteWithIdFactory (Vote vote) {
-        return  Vote
+    public static Vote voteWithIdFactory(Vote vote) {
+        return Vote
                 .builder()
                 .id(faker.random().nextLong())
                 .userId(vote.getUserId())
