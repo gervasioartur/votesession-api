@@ -60,9 +60,32 @@ public class VotingSessionServiceTests {
 
         VotingSession result = this.service.open(request);
 
+        int difference =  result.getEndDate().compareTo(result.getStartDate());
         Assertions.assertThat(result).isNotNull();
-        Assertions.assertThat(result.getEndDate())
-                .isEqualTo(result.getStartDate().plusMinutes(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue()));
+        Assertions.assertThat(request.getDuration()).isEqualTo(0);
+        Assertions.assertThat(difference).isEqualTo(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue());
+        Mockito.verify(this.agendaRepository, Mockito.times(1)).findById(request.getAgendaId());
+        Mockito.verify(this.repository, Mockito.times(1)).save(Mockito.any(VotingSession.class));
+    }
+
+    @Test
+    @DisplayName("Should open session with informed duration time if duration is not set")
+    void ShouldOpenSessionInformedDurationTimeIfDurationIsNotSet() {
+        OpenVotingSessionRequest request = MocksFactory.openVotingSessionRequestFactory();
+
+        Agenda agenda = MocksFactory.agendaWithIdFactory();
+        VotingSession votingSession = MocksFactory.votingSessionWithNoIdFactory(request, agenda);
+        VotingSession savedVotingSession = MocksFactory.votingSessionWithIdFactory(votingSession);
+
+        Mockito.when(agendaRepository.findById(request.getAgendaId())).thenReturn(Optional.of(agenda));
+        Mockito.when(repository.save(Mockito.any(VotingSession.class))).thenReturn(savedVotingSession);
+
+        VotingSession result = this.service.open(request);
+
+        int difference =  result.getEndDate().compareTo(result.getStartDate());
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(request.getDuration()).isGreaterThan(0);
+        Assertions.assertThat(difference).isGreaterThan(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue());
         Mockito.verify(this.agendaRepository, Mockito.times(1)).findById(request.getAgendaId());
         Mockito.verify(this.repository, Mockito.times(1)).save(Mockito.any(VotingSession.class));
     }

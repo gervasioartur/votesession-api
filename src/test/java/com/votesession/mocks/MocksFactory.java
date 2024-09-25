@@ -105,7 +105,7 @@ public class MocksFactory {
         return OpenVotingSessionRequest
                 .builder()
                 .agendaId(agendaWithIdFactory().getId())
-                .duration((int) faker.number().randomNumber())
+                .duration(faker.number().numberBetween(1, Integer.MAX_VALUE))
                 .build();
     }
 }
