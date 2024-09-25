@@ -57,21 +57,6 @@ public class MocksFactory {
                 .build();
     }
 
-    public static List<AgendaResponse> agendasResponseFactory(List<Agenda> agendas) {
-        return agendas.stream()
-                .map(MocksFactory::agendaResponseFactory)
-                .toList();
-    }
-
-    public static AgendaResponse agendaResponseFactory(Agenda agenda) {
-        return AgendaResponse
-                .builder()
-                .id(agenda.getId())
-                .title(agenda.getTitle())
-                .description(agenda.getDescription())
-                .build();
-    }
-
     public static CreateAgendaRequest createAgendaRequestFactory() {
         return new CreateAgendaRequest(faker.lorem().word(), faker.lorem().paragraph());
     }
@@ -81,18 +66,6 @@ public class MocksFactory {
         return VotingSession
                 .builder()
                 .agenda(MocksFactory.agendaWithIdFactory())
-                .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now().plusMinutes(duration))
-                .active(true)
-                .build();
-    }
-
-    public static VotingSession votingSessionWithNoIdFactory(OpenVotingSessionRequest request, Agenda agenda) {
-        int duration = request.getDuration() == 0 ?
-                GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() : request.getDuration();
-        return VotingSession
-                .builder()
-                .agenda(agenda)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusMinutes(duration))
                 .active(true)
@@ -109,14 +82,6 @@ public class MocksFactory {
                 .active(true)
                 .createdAt(LocalDate.now().atStartOfDay())
                 .createdAt(LocalDate.now().atStartOfDay())
-                .build();
-    }
-
-    public static OpenVotingSessionRequest openVotingSessionRequestFactory() {
-        return OpenVotingSessionRequest
-                .builder()
-                .agendaId(agendaWithIdFactory().getId())
-                .duration(faker.number().numberBetween(1, Integer.MAX_VALUE))
                 .build();
     }
 }
