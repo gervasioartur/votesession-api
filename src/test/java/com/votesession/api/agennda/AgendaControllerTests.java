@@ -150,7 +150,8 @@ public class AgendaControllerTests {
                     .map(votingSession -> new VotingSessionResponse(votingSession.getId(), votingSession.getStartDate(), votingSession.getEndDate()))
                     .toList();
             return new AgendaResponse(agenda.getId(), agenda.getTitle(), agenda.getDescription(), votingSessionsResponse);
-        });;
+        });
+        ;
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(this.URL)

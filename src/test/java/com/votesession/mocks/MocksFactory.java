@@ -46,7 +46,7 @@ public class MocksFactory {
     }
 
     public static Agenda agendaWithIdFactory() {
-        Agenda  agenda = Agenda
+        Agenda agenda = Agenda
                 .builder()
                 .id(faker.random().nextLong())
                 .title(faker.lorem().word())
