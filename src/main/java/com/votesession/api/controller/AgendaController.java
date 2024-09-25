@@ -73,7 +73,7 @@ public class AgendaController {
             @ApiResponse(responseCode = "500", description = "An unexpected error occurred."),
     })
     public ResponseEntity<Response> openSession(@PathVariable Long agendaId,
-                                                @RequestBody OpenVotingSessionRequest request) {
+                                                @Valid @RequestBody OpenVotingSessionRequest request) {
         VotingSession votingSession = VotingSession
                 .builder()
                 .agenda(Agenda.builder().id(agendaId).build())
