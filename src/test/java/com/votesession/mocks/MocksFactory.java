@@ -6,6 +6,7 @@ import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.VotingSession;
+import com.votesession.domain.enums.GeneralIntEnum;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -75,13 +76,28 @@ public class MocksFactory {
         return new CreateAgendaRequest(faker.lorem().word(), faker.lorem().paragraph());
     }
 
-    public static VotingSession votingSessionWithNoIdFactory() {
+    public static VotingSession votingSessionWithNoIdFactory(OpenVotingSessionRequest request, Agenda agenda) {
+        int duration = request.getDuration() == 0 ?
+                GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() : request.getDuration();
         return VotingSession
                 .builder()
-                .agenda(agendaWithIdFactory())
+                .agenda(agenda)
                 .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now().plusMinutes(1))
+                .endDate(LocalDateTime.now().plusMinutes(duration))
                 .active(true)
+                .build();
+    }
+
+    public static VotingSession votingSessionWithIdFactory(VotingSession votingSession) {
+        return VotingSession
+                .builder()
+                .id(faker.random().nextLong())
+                .agenda(votingSession.getAgenda())
+                .startDate(votingSession.getStartDate())
+                .endDate(votingSession.getEndDate())
+                .active(true)
+                .createdAt(LocalDate.now().atStartOfDay())
+                .createdAt(LocalDate.now().atStartOfDay())
                 .build();
     }
 
