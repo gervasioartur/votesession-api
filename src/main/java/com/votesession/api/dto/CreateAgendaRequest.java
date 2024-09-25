@@ -10,9 +10,9 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class CreateAgendaRequest {
-        @NotNull(message = "Title is required.")
-        @NotBlank(message = "Title is required.")
-        private String title;
+    @NotNull(message = "Title is required.")
+    @NotBlank(message = "Title is required.")
+    private String title;
 
-        private String description;
+    private String description;
 }
