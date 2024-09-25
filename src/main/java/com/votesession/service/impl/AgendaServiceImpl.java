@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -17,5 +19,10 @@ public class AgendaServiceImpl implements AgendaService {
     public Agenda create(Agenda agenda) {
         agenda.setActive(true);
         return this.repository.save(agenda);
+    }
+
+    @Override
+    public List<Agenda> readAll() {
+        return this.repository.findAll();
     }
 }
