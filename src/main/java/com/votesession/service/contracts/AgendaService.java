@@ -1,6 +1,7 @@
 package com.votesession.service.contracts;
 
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
 
 import java.util.List;
@@ -12,5 +13,5 @@ public interface AgendaService {
 
     VotingSession openSession(VotingSession votingSession, int duration);
 
-    void vote(String document, String vote);
+    void vote(Vote vote);
 }

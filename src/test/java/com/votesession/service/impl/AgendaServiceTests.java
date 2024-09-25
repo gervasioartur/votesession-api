@@ -1,12 +1,14 @@
 package com.votesession.service.impl;
 
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
 import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.repository.AgendaRepository;
+import com.votesession.repository.VoteRepository;
 import com.votesession.repository.VotingSessionRepository;
 import com.votesession.service.contracts.AgendaService;
 import com.votesession.service.contracts.UserService;
@@ -31,6 +33,9 @@ public class AgendaServiceTests {
 
     @MockBean
     AgendaRepository repository;
+
+    @MockBean
+    VoteRepository voteRepository;
 
     @MockBean
     VotingSessionRepository votingSessionRepository;
@@ -134,14 +139,14 @@ public class AgendaServiceTests {
     }
 
     @Test
-    @DisplayName("Should throw business exception if the is unable to vote")
+    @DisplayName("Should throw business exception if the user is unable to vote")
     void shouldThrowBusinessExceptionIfIsUnableToVote() {
         String document = MocksFactory.faker.lorem().word();
-        String vote = MocksFactory.faker.lorem().word();
+        Vote vote =  MocksFactory.voteWithNoIdFactory(document);
 
         Mockito.when(this.userService.isAbleToVote(document)).thenReturn(false);
 
-        Throwable exception = Assertions.catchThrowable(() -> this.service.vote(document, vote));
+        Throwable exception = Assertions.catchThrowable(() -> this.service.vote(vote));
 
         Assertions.assertThat(exception).isInstanceOf(BusinessException.class);
         Assertions.assertThat(exception.getMessage()).isEqualTo("User unable to vote.");

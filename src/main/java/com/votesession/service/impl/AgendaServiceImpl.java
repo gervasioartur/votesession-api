@@ -1,6 +1,7 @@
 package com.votesession.service.impl;
 
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
 import com.votesession.domain.exception.BusinessException;
@@ -67,8 +68,8 @@ public class AgendaServiceImpl implements AgendaService {
     }
 
     @Override
-    public void vote(String document, String vote) {
-        if(!this.userService.isAbleToVote(document))
+    public void vote(Vote vote) {
+        if(!this.userService.isAbleToVote(vote.getUserId()))
             throw  new BusinessException("User unable to vote.");
     }
 }
