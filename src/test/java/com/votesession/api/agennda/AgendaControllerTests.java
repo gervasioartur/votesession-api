@@ -172,10 +172,10 @@ public class AgendaControllerTests {
         String json = new ObjectMapper().writeValueAsString(requestParams);
 
         Mockito.when(this.service.openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration())))
-                .thenThrow(new NotFoundException("Could not find agenda with id "+ agendaId));
+                .thenThrow(new NotFoundException("Could not find agenda with id " + agendaId));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(this.URL+"/"+agendaId+"/session")
+                .post(this.URL + "/" + agendaId + "/session")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -184,9 +184,9 @@ public class AgendaControllerTests {
                 .perform(request)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("body",
-                        Matchers.is("Could not find agenda with id "+ agendaId)));
+                        Matchers.is("Could not find agenda with id " + agendaId)));
 
-       Mockito.verify(this.service, Mockito.times(1))
+        Mockito.verify(this.service, Mockito.times(1))
                 .openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration()));
     }
 }

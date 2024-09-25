@@ -65,7 +65,7 @@ public class AgendaController {
     }
 
     @Operation(summary = "Open voting session")
-    @PostMapping( value = "/{agendaId}/session", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{agendaId}/session", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns successful message"),
             @ApiResponse(responseCode = "404", description = "Resource not found"),
@@ -78,7 +78,7 @@ public class AgendaController {
                 .agenda(Agenda.builder().id(agendaId).build())
                 .build();
 
-        this.service.openSession(votingSession,request.getDuration());
+        this.service.openSession(votingSession, request.getDuration());
         return null;
     }
 }
