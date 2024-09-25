@@ -81,5 +81,9 @@ public class AgendaServiceImpl implements AgendaService {
 
         if(this.voteRepository.findByUserIdAndAgenda_Id(vote.getUserId(), vote.getAgenda().getId()).isPresent())
             throw  new ConflictException("User already voted.");
+
+        vote.setActive(true);
+        vote.setAgenda(agenda.get());
+        this.voteRepository.save(vote);
     }
 }
