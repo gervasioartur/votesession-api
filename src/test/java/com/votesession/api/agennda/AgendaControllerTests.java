@@ -3,7 +3,7 @@ package com.votesession.api.agennda;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
-import com.votesession.domain.Agenda;
+import com.votesession.domain.entity.Agenda;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.service.contracts.AgendaService;
 import org.hamcrest.Matchers;

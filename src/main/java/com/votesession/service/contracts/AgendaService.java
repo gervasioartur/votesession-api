@@ -1,6 +1,6 @@
 package com.votesession.service.contracts;
 
-import com.votesession.domain.Agenda;
+import com.votesession.domain.entity.Agenda;
 
 import java.util.List;
 

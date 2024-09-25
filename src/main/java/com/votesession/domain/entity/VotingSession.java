@@ -1,4 +1,4 @@
-package com.votesession.domain;
+package com.votesession.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

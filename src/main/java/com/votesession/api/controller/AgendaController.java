@@ -3,7 +3,7 @@ package com.votesession.api.controller;
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.api.dto.Response;
-import com.votesession.domain.Agenda;
+import com.votesession.domain.entity.Agenda;
 import com.votesession.service.contracts.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

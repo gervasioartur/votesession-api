@@ -3,9 +3,11 @@ package com.votesession.mocks;
 import com.github.javafaker.Faker;
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
-import com.votesession.domain.Agenda;
+import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.VotingSession;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MocksFactory {
@@ -70,6 +72,16 @@ public class MocksFactory {
 
     public static CreateAgendaRequest createAgendaRequestFactory() {
         return new CreateAgendaRequest(faker.lorem().word(), faker.lorem().paragraph());
+    }
+
+    public static VotingSession votingSessionWithNoIdFactory() {
+        return VotingSession
+                .builder()
+                .agenda(agendaWithIdFactory())
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusMinutes(1))
+                .active(true)
+                .build();
     }
 
 }

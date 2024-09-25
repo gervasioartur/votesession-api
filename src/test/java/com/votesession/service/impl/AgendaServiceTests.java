@@ -1,6 +1,6 @@
 package com.votesession.service.impl;
 
-import com.votesession.domain.Agenda;
+import com.votesession.domain.entity.Agenda;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.repository.AgendaRepository;
 import com.votesession.service.contracts.AgendaService;
