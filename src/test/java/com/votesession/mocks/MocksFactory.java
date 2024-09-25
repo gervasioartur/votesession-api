@@ -1,6 +1,7 @@
 package com.votesession.mocks;
 
 import com.github.javafaker.Faker;
+import com.votesession.api.agneda.CreateAgendaRequest;
 import com.votesession.domain.Agenda;
 
 public class MocksFactory {
@@ -15,6 +16,15 @@ public class MocksFactory {
                 .build();
     }
 
+    public static Agenda agendaWithNoIdFactory(CreateAgendaRequest request) {
+        return Agenda
+                .builder()
+                .title(request.title())
+                .description(request.description())
+                .active(true)
+                .build();
+    }
+
     public static Agenda agendaWithIdFactory(Agenda agenda) {
         return Agenda
                 .builder()
@@ -25,4 +35,9 @@ public class MocksFactory {
                 .updatedAt(agenda.getUpdatedAt())
                 .build();
     }
+
+    public static CreateAgendaRequest createAgendaRequestFactory() {
+        return new CreateAgendaRequest(faker.lorem().word(), faker.lorem().paragraph());
+    }
+
 }

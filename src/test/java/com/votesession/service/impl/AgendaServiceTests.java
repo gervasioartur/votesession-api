@@ -1,6 +1,9 @@
 package com.votesession.service.impl;
 
-
+import com.votesession.domain.Agenda;
+import com.votesession.mocks.MocksFactory;
+import com.votesession.repository.AgendaRepository;
+import com.votesession.service.contracts.AgendaService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,11 +11,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import com.votesession.domain.Agenda;
-import com.votesession.mocks.MocksFactory;
-import com.votesession.repository.AgendaRepository;
-import com.votesession.service.contracts.AgendaService;
 
 @SpringBootTest
 public class AgendaServiceTests {
@@ -36,7 +34,7 @@ public class AgendaServiceTests {
         Assertions.assertThat(result.getId()).isEqualTo(savedAgenda.getId());
         Assertions.assertThat(result.getTitle()).isEqualTo(savedAgenda.getTitle());
         Assertions.assertThat(result.getDescription()).isEqualTo(savedAgenda.getDescription());
-        Assertions.assertThat(result.isActive()).isEqualTo(savedAgenda.isActive());
+        Assertions.assertThat(result.isActive()).isTrue();
         Assertions.assertThat(result.getCreatedAt()).isEqualTo(savedAgenda.getCreatedAt());
         Assertions.assertThat(result.getUpdatedAt()).isEqualTo(savedAgenda.getUpdatedAt());
     }

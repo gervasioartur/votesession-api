@@ -1,13 +1,11 @@
 package com.votesession.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import com.votesession.domain.Agenda;
 import com.votesession.repository.AgendaRepository;
 import com.votesession.service.contracts.AgendaService;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
@@ -17,6 +15,7 @@ public class AgendaServiceImpl implements AgendaService {
 
     @Override
     public Agenda create(Agenda agenda) {
+        agenda.setActive(true);
         return this.repository.save(agenda);
     }
 }
