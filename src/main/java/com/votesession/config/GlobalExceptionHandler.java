@@ -1,6 +1,7 @@
 package com.votesession.config;
 
 import com.votesession.api.dto.Response;
+import com.votesession.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -23,8 +24,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoResourceFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Response> handleNotFoundExceptions(Exception ex) {
+        Response response = new Response(HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.name(),
+                ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Response> handleNoResourceNotFoundExceptions(Exception ex) {
         Response response = new Response(HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.name(),
                 ex.getMessage());

@@ -2,8 +2,10 @@ package com.votesession.api.controller;
 
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
+import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.api.dto.Response;
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.VotingSession;
 import com.votesession.service.contracts.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,5 +62,23 @@ public class AgendaController {
                 HttpStatus.OK.name(),
                 agendasResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Open voting session")
+    @PostMapping( value = "/{agendaId}/session", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns successful message"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "An unexpected error occurred."),
+    })
+    public ResponseEntity<Response> openSession(@PathVariable Long agendaId,
+                                                @RequestBody OpenVotingSessionRequest request) {
+        VotingSession votingSession = VotingSession
+                .builder()
+                .agenda(Agenda.builder().id(agendaId).build())
+                .build();
+
+        this.service.openSession(votingSession,request.getDuration());
+        return null;
     }
 }
