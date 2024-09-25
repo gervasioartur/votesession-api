@@ -1,12 +1,13 @@
 package com.votesession.mocks;
 
 import com.github.javafaker.Faker;
-import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
-import com.votesession.domain.Agenda;
+import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.VotingSession;
+import com.votesession.domain.enums.GeneralIntEnum;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class MocksFactory {
     public static final Faker faker = new Faker();
@@ -53,23 +54,31 @@ public class MocksFactory {
                 .build();
     }
 
-    public static List<AgendaResponse> agendasResponseFactory(List<Agenda> agendas) {
-        return agendas.stream()
-                .map(MocksFactory::agendaResponseFactory)
-                .toList();
-    }
-
-    public static AgendaResponse agendaResponseFactory(Agenda agenda) {
-        return AgendaResponse
-                .builder()
-                .id(agenda.getId())
-                .title(agenda.getTitle())
-                .description(agenda.getDescription())
-                .build();
-    }
-
     public static CreateAgendaRequest createAgendaRequestFactory() {
         return new CreateAgendaRequest(faker.lorem().word(), faker.lorem().paragraph());
     }
 
+    public static VotingSession votingSessionWithNoIdFactory(int duration) {
+        duration = duration == 0 ? GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() : duration;
+        return VotingSession
+                .builder()
+                .agenda(MocksFactory.agendaWithIdFactory())
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusMinutes(duration))
+                .active(true)
+                .build();
+    }
+
+    public static VotingSession votingSessionWithIdFactory(VotingSession votingSession) {
+        return VotingSession
+                .builder()
+                .id(faker.random().nextLong())
+                .agenda(votingSession.getAgenda())
+                .startDate(votingSession.getStartDate())
+                .endDate(votingSession.getEndDate())
+                .active(true)
+                .createdAt(LocalDate.now().atStartOfDay())
+                .createdAt(LocalDate.now().atStartOfDay())
+                .build();
+    }
 }

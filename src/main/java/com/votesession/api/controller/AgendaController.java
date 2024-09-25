@@ -2,8 +2,10 @@ package com.votesession.api.controller;
 
 import com.votesession.api.dto.AgendaResponse;
 import com.votesession.api.dto.CreateAgendaRequest;
+import com.votesession.api.dto.OpenVotingSessionRequest;
 import com.votesession.api.dto.Response;
-import com.votesession.domain.Agenda;
+import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.VotingSession;
 import com.votesession.service.contracts.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,11 +19,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @Tag(name = "Agendas")
+@RequiredArgsConstructor
 @RequestMapping("/agendas")
 public class AgendaController {
     private final AgendaService service;
@@ -59,6 +62,33 @@ public class AgendaController {
         Response response = new Response(HttpStatus.OK.value(),
                 HttpStatus.OK.name(),
                 agendasResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Open voting session")
+    @PostMapping(value = "/{agendaId}/session", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns successful message"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "An unexpected error occurred."),
+    })
+    public ResponseEntity<Response> openSession(@PathVariable Long agendaId,
+                                                @Valid @RequestBody OpenVotingSessionRequest request) {
+        VotingSession votingSession = VotingSession
+                .builder()
+                .agenda(Agenda.builder().id(agendaId).build())
+                .build();
+
+        votingSession = this.service.openSession(votingSession, request.getDuration());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'at time' HH:mm");
+        String formattedStartDate = votingSession.getStartDate().format(formatter);
+        String formattedEndDate = votingSession.getEndDate().format(formatter);
+
+        Response response = new Response(HttpStatus.OK.value(),
+                HttpStatus.OK.name(),
+                "Voting opened successfully, it starts on  "
+                        + formattedStartDate + " and ends on  " + formattedEndDate);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
