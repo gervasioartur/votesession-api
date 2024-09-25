@@ -155,14 +155,13 @@ public class AgendaServiceTests {
     }
 
     @Test
-    @DisplayName("Should throw NotFound Exception if agenda does not exist on vote")
-    void shouldThrowNotFoundExceptionIfAgendaDoesNotExistVote() {
+    @DisplayName("Should throw NotFound Exception if agenda does not exist")
+    void shouldThrowNotFoundExceptionIfAgendaDoesNotExist() {
         String document = MocksFactory.faker.lorem().word();
         Vote vote =  MocksFactory.voteWithNoIdFactory(document);
 
         Mockito.when(this.userService.isAbleToVote(document)).thenReturn(true);
-        Mockito.when(this.repository.findById(vote.getAgenda().getId()))
-                .thenReturn(Optional.empty());
+        Mockito.when(this.repository.findById(vote.getAgenda().getId())).thenReturn(Optional.empty());
 
         Throwable exception = Assertions.catchThrowable(() -> this.service.vote(vote));
 
@@ -170,6 +169,8 @@ public class AgendaServiceTests {
         Assertions.assertThat(exception.getMessage())
                 .isEqualTo("Unable to find agenda with id : " + vote.getAgenda().getId());
         Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
+        Mockito.verify(this.repository, Mockito.times(1)).findById(vote.getAgenda().getId());
+
     }
 
     @Test
@@ -181,6 +182,8 @@ public class AgendaServiceTests {
         Vote savedVote = MocksFactory.voteWithIdFactory(vote);
 
         Mockito.when(this.userService.isAbleToVote(document)).thenReturn(true);
+        Mockito.when(this.repository.findById(vote.getAgenda().getId())).thenReturn(Optional.of(vote.getAgenda()));
+
         Mockito.when(this.voteRepository
                 .findByUserIdAndAgenda_Id(document,vote.getAgenda().getId())).thenReturn(Optional.of(savedVote));
 
@@ -191,5 +194,6 @@ public class AgendaServiceTests {
         Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
         Mockito.verify(this.voteRepository, Mockito.times(1))
                 .findByUserIdAndAgenda_Id(document,vote.getAgenda().getId());
+        Mockito.verify(this.repository, Mockito.times(1)).findById(vote.getAgenda().getId());
     }
 }
