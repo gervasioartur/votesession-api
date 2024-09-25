@@ -29,11 +29,15 @@ public class VotingSessionImpl implements VotingSessionService {
                         ("Could not find agenda with id " + request.getAgendaId()));
 
         LocalDateTime now = LocalDateTime.now();
+        int duration = request.getDuration() == 0 ?
+                GeneralIntEnum.DEFAULT_DURATION_MIN.getValue() :
+                request.getDuration();
+
         VotingSession votingSession = VotingSession
                 .builder()
                 .agenda(agenda)
                 .startDate(now)
-                .endDate(now.plusMinutes(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue()))
+                .endDate(now.plusMinutes(duration))
                 .active(true)
                 .build();
         return this.repository.save(votingSession);
