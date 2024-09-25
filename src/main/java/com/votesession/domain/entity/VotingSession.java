@@ -23,6 +23,7 @@ public class VotingSession implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agenda_id", nullable = false)
     private Agenda agenda;
 
     private LocalDateTime startDate;
