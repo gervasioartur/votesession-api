@@ -37,7 +37,7 @@ public class VotingSessionServiceTests {
 
         Mockito.when(agendaRepository.findById(request.getAgendaId())).thenReturn(Optional.empty());
 
-        Throwable  exception = Assertions.catchThrowable(() -> this.service.open(request));
+        Throwable exception = Assertions.catchThrowable(() -> this.service.open(request));
 
         Assertions.assertThat(exception).isInstanceOf(NotFoundException.class);
         Assertions.assertThat(exception.getMessage()).isEqualTo(
@@ -60,7 +60,7 @@ public class VotingSessionServiceTests {
 
         VotingSession result = this.service.open(request);
 
-        int difference =  result.getEndDate().compareTo(result.getStartDate());
+        int difference = result.getEndDate().compareTo(result.getStartDate());
         Assertions.assertThat(result).isNotNull();
         Assertions.assertThat(request.getDuration()).isEqualTo(0);
         Assertions.assertThat(difference).isEqualTo(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue());
@@ -82,7 +82,7 @@ public class VotingSessionServiceTests {
 
         VotingSession result = this.service.open(request);
 
-        int difference =  result.getEndDate().compareTo(result.getStartDate());
+        int difference = result.getEndDate().compareTo(result.getStartDate());
         Assertions.assertThat(result).isNotNull();
         Assertions.assertThat(request.getDuration()).isGreaterThan(0);
         Assertions.assertThat(difference).isGreaterThan(GeneralIntEnum.DEFAULT_DURATION_MIN.getValue());

@@ -44,7 +44,7 @@ public class AgendaServiceTests {
     @Test
     @DisplayName("Should return  list of agendas")
     void shouldReturnListOfAgendas() {
-        List<Agenda> agendas =  List.of(MocksFactory.agendaWithIdFactory(),MocksFactory.agendaWithIdFactory());
+        List<Agenda> agendas = List.of(MocksFactory.agendaWithIdFactory(), MocksFactory.agendaWithIdFactory());
 
         Mockito.when(this.repository.findAll()).thenReturn(agendas);
         List<Agenda> result = this.service.readAll();
