@@ -4,6 +4,8 @@ import com.github.javafaker.Faker;
 import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.domain.Agenda;
 
+import java.time.LocalDate;
+
 public class MocksFactory {
     public static final Faker faker = new Faker();
 
@@ -28,11 +30,24 @@ public class MocksFactory {
     public static Agenda agendaWithIdFactory(Agenda agenda) {
         return Agenda
                 .builder()
+                .id(faker.random().nextLong())
                 .title(agenda.getTitle())
                 .description(agenda.getDescription())
                 .active(true)
-                .createdAt(agenda.getCreatedAt())
-                .updatedAt(agenda.getUpdatedAt())
+                .createdAt(LocalDate.now().atStartOfDay())
+                .createdAt(LocalDate.now().atStartOfDay())
+                .build();
+    }
+
+    public static Agenda agendaWithIdFactory() {
+        return Agenda
+                .builder()
+                .id(faker.random().nextLong())
+                .title(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .active(true)
+                .createdAt(LocalDate.now().atStartOfDay())
+                .createdAt(LocalDate.now().atStartOfDay())
                 .build();
     }
 
