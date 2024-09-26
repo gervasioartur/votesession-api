@@ -1,4 +1,4 @@
-package com.votesession.api.agennda;
+package com.votesession.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.votesession.api.dto.*;
@@ -56,6 +56,32 @@ public class AgendaControllerTests {
         this.mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .build();
+    }
+
+    @Test
+    @DisplayName("Should return 404 if there's no route")
+    void shouldReturn400IfTheresIsNoRoute() throws Exception {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "invalid_route")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Should return 405 if HttpMethod is not supported")
+    void shouldReturn405IfJHttpMethodIsNotSupported() throws Exception {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(this.URL) // Using delete for test
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
@@ -155,7 +181,6 @@ public class AgendaControllerTests {
                     .toList();
             return new AgendaResponse(agenda.getId(), agenda.getTitle(), agenda.getDescription(), votingSessionsResponse);
         });
-        ;
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get(this.URL)
