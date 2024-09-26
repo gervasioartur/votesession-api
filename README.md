@@ -1,5 +1,11 @@
-# Vote Session Api
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gervasioartur_votesession-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gervasioartur_votesession-api) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gervasioartur_votesession-api&metric=bugs)](https://sonarcloud.io/summary/new_code?id=gervasioartur_votesession-api)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=gervasioartur_votesession-api&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=gervasioartur_votesession-api)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=gervasioartur_votesession-api&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=gervasioartur_votesession-api)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=gervasioartur_votesession-api&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=gervasioartur_votesession-api)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=gervasioartur_votesession-api&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=gervasioartur_votesession-api)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=gervasioartur_votesession-api&metric=coverage)](https://sonarcloud.io/summary/new_code?id=gervasioartur_votesession-api)
 
+# Vote Session Api
 A VoteSessionAPI é uma solução robusta para gerenciar sessões de votação em assembleias de cooperativas, onde cada
 associado possui um voto e as decisões são tomadas democraticamente. Desenvolvida em Java com Spring Boot, essa API REST
 oferece uma interface clara e eficiente para dispositivos móveis, permitindo que os usuários interajam facilmente com o
