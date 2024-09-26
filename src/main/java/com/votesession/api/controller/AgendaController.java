@@ -2,6 +2,7 @@ package com.votesession.api.controller;
 
 import com.votesession.api.dto.*;
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.service.contracts.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,5 +97,27 @@ public class AgendaController {
                 "Voting opened successfully, it starts on  "
                         + formattedStartDate + " and ends on  " + formattedEndDate);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Create new Agenda")
+    @PostMapping(value = "/{userIdentity}/vote", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns successful message"),
+            @ApiResponse(responseCode = "400", description = "Bad request happened"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "409", description = "Conflict"),
+            @ApiResponse(responseCode = "500", description = "An unexpected error occurred."),
+    })
+    public ResponseEntity<Response> vote(@PathVariable(name = "userIdentity") String userIdentity,
+                                         @Valid @RequestBody VoteRequest request) {
+        Vote vote =  Vote
+                .builder()
+                .userId(userIdentity)
+                .agenda(Agenda.builder().id(request.getAgendaId()).build())
+                .vote(request.getVote())
+                .build();
+
+        this.service.vote(vote);
+        return null;
     }
 }
