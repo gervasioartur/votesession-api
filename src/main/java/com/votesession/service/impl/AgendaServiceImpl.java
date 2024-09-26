@@ -53,12 +53,10 @@ public class AgendaServiceImpl implements AgendaService {
                 .stream()
                 .map(agenda -> {
                     // It filters only int ime voting sessions
-                    List<VotingSession> activeVotingSessions = agenda.getVotingSessions() != null ?
-                            agenda.getVotingSessions()
-                                    .stream()
-                                    .filter(votingSession -> votingSession.getEndDate().isAfter(now))
-                                    .toList()
-                            : List.of();
+                    List<VotingSession> activeVotingSessions = agenda.getVotingSessions()
+                            .stream()
+                            .filter(votingSession -> votingSession.getEndDate().isAfter(now))
+                            .toList();
                     agenda.setVotingSessions(new HashSet<>(activeVotingSessions));
                     return agenda;
                 })
@@ -108,10 +106,9 @@ public class AgendaServiceImpl implements AgendaService {
 
         // Getting opened voting sessions
         LocalDateTime now = LocalDateTime.now();
-        boolean hasActiveVotingSession = agenda.get().getVotingSessions() != null &&
-                agenda.get().getVotingSessions()
-                        .stream()
-                        .anyMatch(votingSession -> votingSession.getEndDate().isAfter(now));
+        boolean hasActiveVotingSession = agenda.get().getVotingSessions()
+                .stream()
+                .anyMatch(votingSession -> votingSession.getEndDate().isAfter(now));
 
         if (!hasActiveVotingSession) throw new BusinessException("Could not find active voting session.");
 
@@ -131,12 +128,12 @@ public class AgendaServiceImpl implements AgendaService {
                 .map(agenda -> {
                     // calculating in favor votes
                     int inFavor = (int) agenda.getVotes().stream()
-                            .filter(vote -> "Sim".equalsIgnoreCase(vote.getVote()) && vote.isActive())
+                            .filter(vote -> "Sim".equalsIgnoreCase(vote.getVote()))
                             .count();
 
                     // calculating against votes
                     int against = (int) agenda.getVotes().stream()
-                            .filter(vote -> "Não".equalsIgnoreCase(vote.getVote()) && vote.isActive())
+                            .filter(vote -> "Não".equalsIgnoreCase(vote.getVote()))
                             .count();
 
                     //Building the results
