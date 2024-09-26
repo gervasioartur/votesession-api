@@ -72,7 +72,6 @@ Para evitar a incompatibilidade de versões, o sistema pode ser executado usando
  ```
 
 > ## Outras tecnologias e API's externas
-
 - Webclient
 - jakarta Validation
 - Model Mapper
