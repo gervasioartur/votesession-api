@@ -22,9 +22,32 @@ services:
     networks:
       - votesession-network
 
+  votesession-api:
+    build:
+      dockerfile: Dockerfile
+    container_name: votesession-api
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    depends_on:
+      - votesession-database
+      - votesession-cache
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+        ## DATABASE CONFIGURATION
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://votesession-database:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_SHOW_SQL=false
+      # CONFIGURING CACHE
+      - SPRING.DATA.REDIS.HOST=votesession-cache
+    command: mvn spring-boot:run
+    networks:
+      - votesession-network
+
 volumes:
   votesession-dbdata:
-
 
 networks:
   votesession-network:
