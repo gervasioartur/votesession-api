@@ -118,6 +118,8 @@ public class AgendaController {
                 .build();
 
         this.service.vote(vote);
-        return null;
+        Response response = new Response(HttpStatus.OK.value(),
+                HttpStatus.OK.name(), "User vote saved Successfully.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
