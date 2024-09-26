@@ -252,7 +252,7 @@ public class AgendaServiceImplTests {
 
         Mockito.when(this.repository.findAll()).thenReturn(agendas);
 
-        List<VotingResults> results =  this.service.readResults();
+        List<VotingResults> results = this.service.readResults();
 
         Assertions.assertThat(results).isNotNull();
         Assertions.assertThat(results.getFirst().getAgendaId()).isEqualTo(agendas.getFirst().getId());

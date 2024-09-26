@@ -132,7 +132,7 @@ public class AgendaController {
     })
     public ResponseEntity<Response> readVotingResults() {
         List<VotingResults> results = this.service.readResults();
-        Response response = new Response(HttpStatus.OK.value(),HttpStatus.OK.name(), results);
+        Response response = new Response(HttpStatus.OK.value(), HttpStatus.OK.name(), results);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

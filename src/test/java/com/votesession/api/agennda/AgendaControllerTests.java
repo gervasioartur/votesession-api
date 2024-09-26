@@ -8,7 +8,6 @@ import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
-import com.votesession.domain.model.VotingResults;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.service.contracts.AgendaService;
 import org.hamcrest.Matchers;
