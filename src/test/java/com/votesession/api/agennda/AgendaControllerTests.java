@@ -1,12 +1,11 @@
 package com.votesession.api.agennda;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.votesession.api.dto.AgendaResponse;
-import com.votesession.api.dto.CreateAgendaRequest;
-import com.votesession.api.dto.OpenVotingSessionRequest;
-import com.votesession.api.dto.VotingSessionResponse;
+import com.votesession.api.dto.*;
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
+import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.service.contracts.AgendaService;
@@ -29,6 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -270,4 +270,37 @@ public class AgendaControllerTests {
         Mockito.verify(this.service, Mockito.times(1))
                 .openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration()));
     }
+
+    @Test
+    @DisplayName("Should return 409 conflictException is thrown on save user vote")
+    void shouldReturn409ConflictExceptionIsThrownOnSaveUserVote() throws Exception {
+        String userIdentity =  MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doThrow(new ConflictException("User already voted."))
+                        .when(this.service)
+                                .vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("body",
+                        Matchers.is("User already voted.")));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
+    }
+
 }
