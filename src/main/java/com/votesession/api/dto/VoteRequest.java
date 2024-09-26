@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VoteRequest {
     //this represents the duration of the voting session in Minutes
-    @Min(value = 0, message = "The duration must be equal to or greater than zero.")
+    @Min(value = 1, message = "Invalid value for agenda id.")
     private Long agendaId;
 
     @Pattern(regexp = "Sim|Não", message = "The vote must be either 'Sim' or 'Não'.")
