@@ -62,7 +62,7 @@ public class AgendaControllerTests {
     @DisplayName("Should return 404 if there's no route")
     void shouldReturn400IfTheresIsNoRoute() throws Exception {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(this.URL+"invalid_route")
+                .post(this.URL + "invalid_route")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
