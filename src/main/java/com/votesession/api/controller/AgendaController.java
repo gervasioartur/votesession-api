@@ -99,7 +99,7 @@ public class AgendaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "Create new Agenda")
+    @Operation(summary = "Save user vote")
     @PostMapping(value = "/{userIdentity}/vote", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns successful message"),

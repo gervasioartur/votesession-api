@@ -83,6 +83,14 @@ public class AgendaServiceImpl implements AgendaService {
         if (this.voteRepository.findByUserIdAndAgenda_Id(vote.getUserId(), vote.getAgenda().getId()).isPresent())
             throw new ConflictException("User already voted.");
 
+        LocalDateTime now = LocalDateTime.now();
+        boolean hasActiveVotingSession = agenda.get().getVotingSessions() != null &&
+                        agenda.get().getVotingSessions()
+                        .stream()
+                        .anyMatch(votingSession -> votingSession.getEndDate().isAfter(now));
+
+        if (!hasActiveVotingSession) throw new  BusinessException("Could not find active voting session.");
+
         vote.setActive(true);
         vote.setAgenda(agenda.get());
         this.voteRepository.save(vote);
