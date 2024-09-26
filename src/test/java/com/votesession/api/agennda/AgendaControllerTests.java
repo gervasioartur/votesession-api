@@ -1,12 +1,12 @@
 package com.votesession.api.agennda;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.votesession.api.dto.AgendaResponse;
-import com.votesession.api.dto.CreateAgendaRequest;
-import com.votesession.api.dto.OpenVotingSessionRequest;
-import com.votesession.api.dto.VotingSessionResponse;
+import com.votesession.api.dto.*;
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
+import com.votesession.domain.exception.BusinessException;
+import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.service.contracts.AgendaService;
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,5 +270,190 @@ public class AgendaControllerTests {
 
         Mockito.verify(this.service, Mockito.times(1))
                 .openSession(Mockito.any(VotingSession.class), Mockito.eq(requestParams.getDuration()));
+    }
+
+    @Test
+    @DisplayName("Should return 409 if conflictException is thrown on save user vote")
+    void shouldReturn409IfConflictExceptionIsThrownOnSaveUserVote() throws Exception {
+        String userIdentity = MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doThrow(new ConflictException("User already voted."))
+                .when(this.service)
+                .vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("body",
+                        Matchers.is("User already voted.")));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
+    }
+
+    @Test
+    @DisplayName("Should return 404 if NotFoundException is thrown on save user vote")
+    void shouldReturn409ConflictExceptionIsThrownOnSaveUserVote() throws Exception {
+        String userIdentity = MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doThrow(new NotFoundException("Unable to find agenda with id : " + requestParams.getAgendaId()))
+                .when(this.service)
+                .vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("body",
+                        Matchers.is("Unable to find agenda with id : " + requestParams.getAgendaId())));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
+    }
+
+    @Test
+    @DisplayName("Should return 400 if BusinessException is thrown on save user vote")
+    void shouldReturn400BusinessExceptionIsThrownOnSaveUserVote() throws Exception {
+        String userIdentity = MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doThrow(new BusinessException("User unable to vote."))
+                .when(this.service)
+                .vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("body",
+                        Matchers.is("User unable to vote.")));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(longs = {0, -1})
+    @DisplayName("Should return 400 if agenda id is invalid on save user vote")
+    void shouldReturn400AgendaIdIsInvalidOnSaveUserVote(Long agendaId) throws Exception {
+        String userIdentity = MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(agendaId)
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("body",
+                        Matchers.is("Invalid value for agenda id.")));
+
+        Mockito.verify(this.service, Mockito.times(0))
+                .vote(Mockito.any(Vote.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"nao", "sim", "talvez"})
+    @DisplayName("Should return 400 if vote is invalid on save user vote")
+    void shouldReturn400VoteIsInvalidOnSaveUserVote(String vote) throws Exception {
+        String userIdentity = MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote(vote)
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("body",
+                        Matchers.is("The vote must be either 'Sim' or 'Não'.")));
+
+        Mockito.verify(this.service, Mockito.times(0))
+                .vote(Mockito.any(Vote.class));
+    }
+
+    @Test
+    @DisplayName("Should return 200 if vote is invalid on save user vote")
+    void shouldReturn400VoteIsInvalidOnSaveUserVote() throws Exception {
+        String userIdentity = MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Sim")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doNothing().when(this.service).vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("body",
+                        Matchers.is("User vote saved Successfully.")));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
     }
 }

@@ -1,6 +1,8 @@
 package com.votesession.config;
 
 import com.votesession.api.dto.Response;
+import com.votesession.domain.exception.BusinessException;
+import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +17,21 @@ import java.util.Objects;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    //    Dealing with customized exceptions
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errorMessage = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage();
         Response response = new Response(HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name(),
                 errorMessage);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Response> handleBusinessExceptions(Exception ex) {
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -32,6 +43,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Response> handleConflictExceptions(Exception ex) {
+        Response response = new Response(HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.name(),
+                ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    //    Dealing with spring web exceptions
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Response> handleNoResourceNotFoundExceptions(Exception ex) {
         Response response = new Response(HttpStatus.NOT_FOUND.value(),

@@ -3,6 +3,7 @@ package com.votesession.mocks;
 import com.github.javafaker.Faker;
 import com.votesession.api.dto.CreateAgendaRequest;
 import com.votesession.domain.entity.Agenda;
+import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
 import com.votesession.domain.enums.GeneralIntEnum;
 
@@ -97,6 +98,28 @@ public class MocksFactory {
                 .agenda(agenda)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusDays(faker.random().nextInt(10)))
+                .active(true)
+                .createdAt(LocalDate.now().atStartOfDay())
+                .createdAt(LocalDate.now().atStartOfDay())
+                .build();
+    }
+
+
+    public static Vote voteWithNoIdFactory(String document) {
+        return Vote
+                .builder()
+                .userId(document)
+                .agenda(MocksFactory.agendaWithIdFactory())
+                .vote(faker.lorem().word())
+                .build();
+    }
+
+    public static Vote voteWithIdFactory(Vote vote) {
+        return Vote
+                .builder()
+                .id(faker.random().nextLong())
+                .userId(vote.getUserId())
+                .agenda(vote.getAgenda())
                 .active(true)
                 .createdAt(LocalDate.now().atStartOfDay())
                 .createdAt(LocalDate.now().atStartOfDay())
