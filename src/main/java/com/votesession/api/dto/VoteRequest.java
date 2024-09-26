@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoteRequest {
-    //this represents the duration of the voting session in Minutes
     @Min(value = 1, message = "Invalid value for agenda id.")
     private Long agendaId;
 
