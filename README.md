@@ -40,11 +40,14 @@ Para fornecer uma documentação rica dos endpoints, optou-se pelo uso do Swagge
 link: http://localhost:8080/swagger-ui/index.html#/. Lembrando que essa documentação só pode ser acessada quando a
 aplicação estiver rodando, e o serviço pode variar dependendo da sua hospedagem.
 
-De modo a fazer o versionamento da API, foi escolhido o versionamento por meio de URLs, utilizando a estrutura /api/v1/. 
-Essa abordagem oferece clareza e organização na gestão das versões da API, permitindo que novas funcionalidades e alterações 
-sejam introduzidas sem afetar os usuários que dependem de versões anteriores. Além disso, a inclusão da versão na URL 
-torna explícito para os desenvolvedores e consumidores da API qual versão está sendo utilizada, facilitando a documentação 
-e o suporte. Essa estratégia proporciona flexibilidade e controle, permitindo uma evolução contínua da API enquanto mantém 
+De modo a fazer o versionamento da API, foi escolhido o versionamento por meio de URLs, utilizando a estrutura /api/v1/.
+Essa abordagem oferece clareza e organização na gestão das versões da API, permitindo que novas funcionalidades e
+alterações
+sejam introduzidas sem afetar os usuários que dependem de versões anteriores. Além disso, a inclusão da versão na URL
+torna explícito para os desenvolvedores e consumidores da API qual versão está sendo utilizada, facilitando a
+documentação
+e o suporte. Essa estratégia proporciona flexibilidade e controle, permitindo uma evolução contínua da API enquanto
+mantém
 a compatibilidade com versões anteriores, resultando em uma experiência de uso mais estável e previsível.
 
 Para garantir uma qualidade de código excelente, foi adotado o uso do Sonar, onde podemos visualizar as métricas e a
@@ -79,6 +82,7 @@ Para evitar a incompatibilidade de versões, o sistema pode ser executado usando
  ```
 
 > ## Outras tecnologias e API's externas
+
 - Webclient
 - jakarta Validation
 - Model Mapper
