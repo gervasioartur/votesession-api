@@ -272,8 +272,8 @@ public class AgendaControllerTests {
     }
 
     @Test
-    @DisplayName("Should return 409 conflictException is thrown on save user vote")
-    void shouldReturn409ConflictExceptionIsThrownOnSaveUserVote() throws Exception {
+    @DisplayName("Should return 409 if conflictException is thrown on save user vote")
+    void shouldReturn409IfConflictExceptionIsThrownOnSaveUserVote() throws Exception {
         String userIdentity =  MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
@@ -298,6 +298,38 @@ public class AgendaControllerTests {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("body",
                         Matchers.is("User already voted.")));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
+    }
+
+    @Test
+    @DisplayName("Should return 404 if NotFoundException is thrown on save user vote")
+    void shouldReturn409ConflictExceptionIsThrownOnSaveUserVote() throws Exception {
+        String userIdentity =  MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doThrow(new NotFoundException("Unable to find agenda with id : " + requestParams.getAgendaId()))
+                .when(this.service)
+                .vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("body",
+                        Matchers.is("Unable to find agenda with id : " + requestParams.getAgendaId())));
 
         Mockito.verify(this.service, Mockito.times(1))
                 .vote(Mockito.any(Vote.class));
