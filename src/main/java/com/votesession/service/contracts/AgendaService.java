@@ -7,6 +7,7 @@ import com.votesession.domain.model.VotingResults;
 
 import java.util.List;
 
+
 public interface AgendaService {
     Agenda create(Agenda agenda);
 
