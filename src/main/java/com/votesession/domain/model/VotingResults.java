@@ -5,11 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VotingResults {
+public class VotingResults implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Long agendaId;
     private String agendaTitle;
     private String agendaDescription;
