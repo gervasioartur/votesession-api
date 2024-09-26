@@ -5,6 +5,7 @@ import com.votesession.api.dto.*;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
+import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
 import com.votesession.mocks.MocksFactory;
@@ -330,6 +331,38 @@ public class AgendaControllerTests {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("body",
                         Matchers.is("Unable to find agenda with id : " + requestParams.getAgendaId())));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
+    }
+
+    @Test
+    @DisplayName("Should return 400 if BusinessException is thrown on save user vote")
+    void shouldReturn400BusinessExceptionIsThrownOnSaveUserVote() throws Exception {
+        String userIdentity =  MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doThrow(new BusinessException("User unable to vote."))
+                .when(this.service)
+                .vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("body",
+                        Matchers.is("User unable to vote.")));
 
         Mockito.verify(this.service, Mockito.times(1))
                 .vote(Mockito.any(Vote.class));
