@@ -4,6 +4,7 @@ import com.votesession.api.dto.Response;
 import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Objects;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -70,6 +72,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response> handleOtherExceptions(Exception ex) {
+        log.error(ex.getMessage(), ex);
         Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name(),
                 "An unexpected error occurred. Please try again later.");
