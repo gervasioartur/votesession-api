@@ -1,4 +1,13 @@
 services:
+  votesession-cache:
+    container_name: votesession-cache
+    image: redis:6.0
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - votesession-network
+
   votesession-database:
     container_name: votesession-database
     image: postgres:14-alpine

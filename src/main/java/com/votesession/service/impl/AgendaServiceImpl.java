@@ -16,6 +16,8 @@ import com.votesession.service.contracts.AgendaService;
 import com.votesession.service.contracts.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -92,6 +94,7 @@ public class AgendaServiceImpl implements AgendaService {
      * If there's no active voting session, throws BusinessException
      */
     @Override
+    @CacheEvict(value = "voting_results", allEntries = true)
     public void vote(Vote vote) {
         if (!this.userService.isAbleToVote(vote.getUserId()))
             throw new BusinessException("User unable to vote.");
@@ -121,6 +124,7 @@ public class AgendaServiceImpl implements AgendaService {
      * Has responsibility of calculating the voting results,
      */
     @Override
+    @Cacheable(value = "voting_results")
     public List<VotingResults> readResults() {
         List<Agenda> agendas = this.repository.findAll();
         return agendas.stream()
