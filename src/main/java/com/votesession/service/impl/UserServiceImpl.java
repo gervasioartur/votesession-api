@@ -7,6 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/*
+ * This class deals with document validation,
+ * it uses inverter texto api that can be accessed by thi link https://api.invertexto.com/.
+ * This api just validates if the cpf is valid or not.
+ * To call the api it uses webclient.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -21,6 +27,7 @@ public class UserServiceImpl implements UserService {
                 + "&value=" + document
                 + "&type=cpf";
 
+        //Getting the result using wecClient
         InverterTextoApiResponse response = this.webClientBuilder.build()
                 .get()
                 .uri(URI)
