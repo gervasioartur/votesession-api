@@ -110,7 +110,7 @@ public class AgendaController {
     })
     public ResponseEntity<Response> vote(@PathVariable(name = "userIdentity") String userIdentity,
                                          @Valid @RequestBody VoteRequest request) {
-        Vote vote =  Vote
+        Vote vote = Vote
                 .builder()
                 .userId(userIdentity)
                 .agenda(Agenda.builder().id(request.getAgendaId()).build())

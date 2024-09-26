@@ -17,7 +17,7 @@ import java.util.Objects;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-//    Dealing with customized exceptions
+    //    Dealing with customized exceptions
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errorMessage = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage();
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
-//    Dealing with spring web exceptions
+    //    Dealing with spring web exceptions
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Response> handleNoResourceNotFoundExceptions(Exception ex) {
         Response response = new Response(HttpStatus.NOT_FOUND.value(),

@@ -30,7 +30,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -276,7 +275,7 @@ public class AgendaControllerTests {
     @Test
     @DisplayName("Should return 409 if conflictException is thrown on save user vote")
     void shouldReturn409IfConflictExceptionIsThrownOnSaveUserVote() throws Exception {
-        String userIdentity =  MocksFactory.faker.lorem().word();
+        String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
                 .agendaId(MocksFactory.faker.number().randomNumber())
@@ -286,8 +285,8 @@ public class AgendaControllerTests {
         String json = new ObjectMapper().writeValueAsString(requestParams);
 
         Mockito.doThrow(new ConflictException("User already voted."))
-                        .when(this.service)
-                                .vote(Mockito.any(Vote.class));
+                .when(this.service)
+                .vote(Mockito.any(Vote.class));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(this.URL + "/" + userIdentity + "/vote")
@@ -308,7 +307,7 @@ public class AgendaControllerTests {
     @Test
     @DisplayName("Should return 404 if NotFoundException is thrown on save user vote")
     void shouldReturn409ConflictExceptionIsThrownOnSaveUserVote() throws Exception {
-        String userIdentity =  MocksFactory.faker.lorem().word();
+        String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
                 .agendaId(MocksFactory.faker.number().randomNumber())
@@ -340,7 +339,7 @@ public class AgendaControllerTests {
     @Test
     @DisplayName("Should return 400 if BusinessException is thrown on save user vote")
     void shouldReturn400BusinessExceptionIsThrownOnSaveUserVote() throws Exception {
-        String userIdentity =  MocksFactory.faker.lorem().word();
+        String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
                 .agendaId(MocksFactory.faker.number().randomNumber())
@@ -371,10 +370,10 @@ public class AgendaControllerTests {
 
 
     @ParameterizedTest
-    @ValueSource(longs = {0,-1})
+    @ValueSource(longs = {0, -1})
     @DisplayName("Should return 400 if agenda id is invalid on save user vote")
     void shouldReturn400AgendaIdIsInvalidOnSaveUserVote(Long agendaId) throws Exception {
-        String userIdentity =  MocksFactory.faker.lorem().word();
+        String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
                 .agendaId(agendaId)
@@ -400,10 +399,10 @@ public class AgendaControllerTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"nao","sim","talvez"})
+    @ValueSource(strings = {"nao", "sim", "talvez"})
     @DisplayName("Should return 400 if vote is invalid on save user vote")
     void shouldReturn400VoteIsInvalidOnSaveUserVote(String vote) throws Exception {
-        String userIdentity =  MocksFactory.faker.lorem().word();
+        String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
                 .agendaId(MocksFactory.faker.number().randomNumber())
@@ -431,7 +430,7 @@ public class AgendaControllerTests {
     @Test
     @DisplayName("Should return 200 if vote is invalid on save user vote")
     void shouldReturn400VoteIsInvalidOnSaveUserVote() throws Exception {
-        String userIdentity =  MocksFactory.faker.lorem().word();
+        String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
                 .agendaId(MocksFactory.faker.number().randomNumber())

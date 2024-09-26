@@ -85,11 +85,11 @@ public class AgendaServiceImpl implements AgendaService {
 
         LocalDateTime now = LocalDateTime.now();
         boolean hasActiveVotingSession = agenda.get().getVotingSessions() != null &&
-                        agenda.get().getVotingSessions()
+                agenda.get().getVotingSessions()
                         .stream()
                         .anyMatch(votingSession -> votingSession.getEndDate().isAfter(now));
 
-        if (!hasActiveVotingSession) throw new  BusinessException("Could not find active voting session.");
+        if (!hasActiveVotingSession) throw new BusinessException("Could not find active voting session.");
 
         vote.setActive(true);
         vote.setAgenda(agenda.get());
