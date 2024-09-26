@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -191,6 +192,30 @@ public class AgendaServiceImplTests {
 
         Assertions.assertThat(exception).isInstanceOf(ConflictException.class);
         Assertions.assertThat(exception.getMessage()).isEqualTo("User already voted.");
+        Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
+        Mockito.verify(this.voteRepository, Mockito.times(1))
+                .findByUserIdAndAgenda_Id(document, vote.getAgenda().getId());
+        Mockito.verify(this.repository, Mockito.times(1)).findById(vote.getAgenda().getId());
+    }
+
+    @Test
+    @DisplayName("Should throw Business exception if there is no opened voting session")
+    void shouldThrowBusinessExceptionIfThereIsOpenedVotingException() {
+        String document = MocksFactory.faker.lorem().word();
+        Vote vote = MocksFactory.voteWithNoIdFactory(document);
+
+        LocalDateTime now = LocalDateTime.now();
+        vote.getAgenda().getVotingSessions().forEach(session -> session.setEndDate(now.minusMinutes(2)));
+
+        Mockito.when(this.userService.isAbleToVote(document)).thenReturn(true);
+        Mockito.when(this.repository.findById(vote.getAgenda().getId())).thenReturn(Optional.of(vote.getAgenda()));
+        Mockito.when(this.voteRepository
+                .findByUserIdAndAgenda_Id(document, vote.getAgenda().getId())).thenReturn(Optional.empty());
+
+        Throwable exception = Assertions.catchThrowable(() -> this.service.vote(vote));
+
+        Assertions.assertThat(exception).isInstanceOf(BusinessException.class);
+        Assertions.assertThat(exception.getMessage()).isEqualTo("Could not find active voting session.");
         Mockito.verify(this.userService, Mockito.times(1)).isAbleToVote(document);
         Mockito.verify(this.voteRepository, Mockito.times(1))
                 .findByUserIdAndAgenda_Id(document, vote.getAgenda().getId());
