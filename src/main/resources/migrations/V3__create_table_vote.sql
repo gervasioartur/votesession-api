@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS t_votes
+(
+    id         BIGSERIAL   NOT NULL PRIMARY KEY,
+    user_id    VARCHAR(50) NOT NULL,
+    agenda_id  INT         NOT NULL REFERENCES t_agendas (id),
+    vote       VARCHAR(3)  NOT NULL,
+    is_active  BOOLEAN     NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
