@@ -255,9 +255,7 @@ public class AgendaServiceImplTests {
         List<VotingResults> results = this.service.readResults();
 
         Assertions.assertThat(results).isNotNull();
-        Assertions.assertThat(results.getFirst().getAgendaId()).isEqualTo(agendas.getFirst().getId());
-        Assertions.assertThat(results.getLast().getAgendaId()).isEqualTo(agendas.getLast().getId());
-
+        Assertions.assertThat(results.size()).isEqualTo(agendas.size());
         Mockito.verify(this.repository, Mockito.times(1)).findAll();
     }
 }

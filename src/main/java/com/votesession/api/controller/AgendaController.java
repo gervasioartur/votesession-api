@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @Tag(name = "Agendas")
 @RequiredArgsConstructor
-@RequestMapping("/agendas")
+@RequestMapping("/api/v1/agendas")
 public class AgendaController {
     private final AgendaService service;
     private final ModelMapper mapper;

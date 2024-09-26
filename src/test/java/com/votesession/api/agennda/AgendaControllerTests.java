@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 public class AgendaControllerTests {
-    private final String URL = "/agendas";
+    private final String URL = "/api/v1/agendas";
 
     @Autowired
     private WebApplicationContext context;
@@ -342,7 +342,7 @@ public class AgendaControllerTests {
         String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
-                .agendaId(MocksFactory.faker.number().randomNumber())
+                .agendaId((long) MocksFactory.faker.number().numberBetween(1, Integer.MAX_VALUE))
                 .vote("Não")
                 .build();
 
@@ -405,7 +405,7 @@ public class AgendaControllerTests {
         String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
-                .agendaId(MocksFactory.faker.number().randomNumber())
+                .agendaId((long) MocksFactory.faker.number().numberBetween(1, Integer.MAX_VALUE))
                 .vote(vote)
                 .build();
 
@@ -433,7 +433,7 @@ public class AgendaControllerTests {
         String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
-                .agendaId(MocksFactory.faker.number().randomNumber())
+                .agendaId((long) MocksFactory.faker.number().numberBetween(1, Integer.MAX_VALUE))
                 .vote("Sim")
                 .build();
 
