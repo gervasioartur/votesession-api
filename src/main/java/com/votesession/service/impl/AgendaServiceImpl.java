@@ -7,6 +7,8 @@ import com.votesession.domain.enums.GeneralIntEnum;
 import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
+import com.votesession.domain.model.Result;
+import com.votesession.domain.model.VotingResults;
 import com.votesession.repository.AgendaRepository;
 import com.votesession.repository.VoteRepository;
 import com.votesession.repository.VotingSessionRepository;
@@ -94,5 +96,33 @@ public class AgendaServiceImpl implements AgendaService {
         vote.setActive(true);
         vote.setAgenda(agenda.get());
         this.voteRepository.save(vote);
+    }
+
+    @Override
+    public List<VotingResults> readResults() {
+        List<Agenda> agendas = this.repository.findAll();
+        return agendas.stream()
+                .map(agenda -> {
+                    int inFavor = (int) agenda.getVotes().stream()
+                            .filter(vote -> "Sim".equalsIgnoreCase(vote.getVote()) && vote.isActive())
+                            .count();
+
+                    int against = (int) agenda.getVotes().stream()
+                            .filter(vote -> "Não".equalsIgnoreCase(vote.getVote()) && vote.isActive())
+                            .count();
+
+                    Result results = Result.builder()
+                            .inFavor(inFavor)
+                            .against(against)
+                            .build();
+
+                    return VotingResults.builder()
+                            .agendaId(agenda.getId())
+                            .agendaTitle(agenda.getTitle())
+                            .agendaDescription(agenda.getDescription())
+                            .results(results)
+                            .build();
+                })
+                .toList();
     }
 }
