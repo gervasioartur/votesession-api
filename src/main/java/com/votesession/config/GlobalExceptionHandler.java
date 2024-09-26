@@ -1,6 +1,7 @@
 package com.votesession.config;
 
 import com.votesession.api.dto.Response;
+import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,14 @@ public class GlobalExceptionHandler {
         Response response = new Response(HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.name(),
                 errorMessage);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Response> handleBusinessExceptions(Exception ex) {
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
