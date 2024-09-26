@@ -28,6 +28,11 @@ Para garantir um bom desempenho, foi adotado o uso de cache com Redis, permitind
 Redis sejam acessados facilmente, sem a necessidade de interagir com o banco de dados toda vez que for feita uma busca
 por informações estáticas.
 
+Durante o desenvolvimento, foi observada a indisponibilidade do serviço de validação de CPF fornecido na descrição do 
+desafio, disponível pelo link: https://user-info.herokuapp.com/users/{cpf}.
+
+Dessa forma, para realizar a validação utilizando um serviço externo, foi adotada a Inverter Texto API, que pode ser 
+acessada pelo link: https://api.invertexto.com/api-validador-cpf-cnpj. Esta API realiza a validação do CPF.
 
 > ## Documentação da API e Qualidade do códico
 
@@ -67,8 +72,6 @@ Para evitar a incompatibilidade de versões, o sistema pode ser executado usando
  ```
 
 > ## Outras tecnologias e API's externas
-
-- Inverter Texto API (https://api.invertexto.com/verify-email)
 - Webclient
 - jakarta Validation
 - Model Mapper
