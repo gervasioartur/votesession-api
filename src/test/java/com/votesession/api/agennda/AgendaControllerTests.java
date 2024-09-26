@@ -427,4 +427,34 @@ public class AgendaControllerTests {
         Mockito.verify(this.service, Mockito.times(0))
                 .vote(Mockito.any(Vote.class));
     }
+
+    @Test
+    @DisplayName("Should return 200 if vote is invalid on save user vote")
+    void shouldReturn400VoteIsInvalidOnSaveUserVote() throws Exception {
+        String userIdentity =  MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(MocksFactory.faker.number().randomNumber())
+                .vote("Sim")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        Mockito.doNothing().when(this.service).vote(Mockito.any(Vote.class));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("body",
+                        Matchers.is("User vote saved Successfully.")));
+
+        Mockito.verify(this.service, Mockito.times(1))
+                .vote(Mockito.any(Vote.class));
+    }
 }
