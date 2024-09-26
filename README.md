@@ -57,7 +57,7 @@ mantém
 a compatibilidade com versões anteriores, resultando em uma experiência de uso mais estável e previsível.
 
 Para garantir uma qualidade de código excelente, foi adotado o uso do Sonar, onde podemos visualizar as métricas e a
-cobertura de testes, acessível através do seguinte link: [link].
+cobertura de testes, acessível através do seguinte link: https://sonarcloud.io/project/overview?id=gervasioartur_votesession-api.
 
 > ## Rodando a API
 
