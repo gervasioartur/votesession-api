@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -368,4 +369,33 @@ public class AgendaControllerTests {
                 .vote(Mockito.any(Vote.class));
     }
 
+
+    @ParameterizedTest
+    @ValueSource(longs = {0,-1})
+    @DisplayName("Should return 400 if agenda id is invalid on save user vote")
+    void shouldReturn400AgendaIdIsInvalidOnSaveUserVote(Long agendaId) throws Exception {
+        String userIdentity =  MocksFactory.faker.lorem().word();
+        VoteRequest requestParams = VoteRequest
+                .builder()
+                .agendaId(agendaId)
+                .vote("Não")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(requestParams);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(this.URL + "/" + userIdentity + "/vote")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("body",
+                        Matchers.is("Invalid value for agenda id.")));
+
+        Mockito.verify(this.service, Mockito.times(0))
+                .vote(Mockito.any(Vote.class));
+    }
 }
