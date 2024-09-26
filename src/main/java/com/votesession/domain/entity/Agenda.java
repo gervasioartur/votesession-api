@@ -30,6 +30,9 @@ public class Agenda implements Serializable {
     @OneToMany(mappedBy = "agenda", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<VotingSession> votingSessions;
 
+    @OneToMany(mappedBy = "agenda", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Vote> votes;
+
     @Column(name = "is_active")
     private boolean active;
 

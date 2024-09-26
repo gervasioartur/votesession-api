@@ -429,7 +429,7 @@ public class AgendaControllerTests {
 
     @Test
     @DisplayName("Should return 200 if vote is invalid on save user vote")
-    void shouldReturn400VoteIsInvalidOnSaveUserVote() throws Exception {
+    void shouldReturn200VoteIsInvalidOnSaveUserVote() throws Exception {
         String userIdentity = MocksFactory.faker.lorem().word();
         VoteRequest requestParams = VoteRequest
                 .builder()
@@ -455,5 +455,21 @@ public class AgendaControllerTests {
 
         Mockito.verify(this.service, Mockito.times(1))
                 .vote(Mockito.any(Vote.class));
+    }
+
+    @Test
+    @DisplayName("Should return 200 on read voting results")
+    void shouldReturn200ReadVotingResults() throws Exception {
+        Mockito.when(this.service.readResults()).thenReturn(List.of());
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(this.URL + "/votes/results")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isOk());
+
+        Mockito.verify(this.service, Mockito.times(1)).readResults();
     }
 }

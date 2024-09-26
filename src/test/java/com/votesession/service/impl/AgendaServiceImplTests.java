@@ -7,6 +7,7 @@ import com.votesession.domain.enums.GeneralIntEnum;
 import com.votesession.domain.exception.BusinessException;
 import com.votesession.domain.exception.ConflictException;
 import com.votesession.domain.exception.NotFoundException;
+import com.votesession.domain.model.VotingResults;
 import com.votesession.mocks.MocksFactory;
 import com.votesession.repository.AgendaRepository;
 import com.votesession.repository.VoteRepository;
@@ -242,5 +243,21 @@ public class AgendaServiceImplTests {
                 .findByUserIdAndAgenda_Id(document, vote.getAgenda().getId());
         Mockito.verify(this.repository, Mockito.times(1)).findById(vote.getAgenda().getId());
         Mockito.verify(this.voteRepository, Mockito.times(1)).save(Mockito.any(Vote.class));
+    }
+
+    @Test
+    @DisplayName("Should return voting  results")
+    void shouldReturnVotingResults() {
+        List<Agenda> agendas = List.of(MocksFactory.agendaWithIdFactory(), MocksFactory.agendaWithIdFactory());
+
+        Mockito.when(this.repository.findAll()).thenReturn(agendas);
+
+        List<VotingResults> results = this.service.readResults();
+
+        Assertions.assertThat(results).isNotNull();
+        Assertions.assertThat(results.getFirst().getAgendaId()).isEqualTo(agendas.getFirst().getId());
+        Assertions.assertThat(results.getLast().getAgendaId()).isEqualTo(agendas.getLast().getId());
+
+        Mockito.verify(this.repository, Mockito.times(1)).findAll();
     }
 }

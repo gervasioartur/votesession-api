@@ -59,7 +59,16 @@ public class MocksFactory {
 
         Set<VotingSession> votingSessions = new HashSet<>(List.of(MocksFactory.votingSessionWithIdFactory(agenda)
                 , MocksFactory.votingSessionWithIdFactory(agenda)));
+
+        Vote inFavor = MocksFactory.voteWithIdFactory(agenda);
+        inFavor.setVote("Sim");
+        Vote against = MocksFactory.voteWithIdFactory(agenda);
+        against.setVote("Não");
+        Set<Vote> votes = new HashSet<>(List.of(inFavor, against));
+
         agenda.setVotingSessions(votingSessions);
+        agenda.setVotes(votes);
+
         return agenda;
     }
 
@@ -120,6 +129,18 @@ public class MocksFactory {
                 .id(faker.random().nextLong())
                 .userId(vote.getUserId())
                 .agenda(vote.getAgenda())
+                .active(true)
+                .createdAt(LocalDate.now().atStartOfDay())
+                .createdAt(LocalDate.now().atStartOfDay())
+                .build();
+    }
+
+    public static Vote voteWithIdFactory(Agenda agenda) {
+        return Vote
+                .builder()
+                .id(faker.random().nextLong())
+                .userId(faker.lorem().word())
+                .agenda(agenda)
                 .active(true)
                 .createdAt(LocalDate.now().atStartOfDay())
                 .createdAt(LocalDate.now().atStartOfDay())
