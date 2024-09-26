@@ -4,6 +4,7 @@ import com.votesession.api.dto.*;
 import com.votesession.domain.entity.Agenda;
 import com.votesession.domain.entity.Vote;
 import com.votesession.domain.entity.VotingSession;
+import com.votesession.domain.model.VotingResults;
 import com.votesession.service.contracts.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -120,6 +121,18 @@ public class AgendaController {
         this.service.vote(vote);
         Response response = new Response(HttpStatus.OK.value(),
                 HttpStatus.OK.name(), "User vote saved Successfully.");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Read voting results")
+    @GetMapping(value = "/votes/results", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns voting results"),
+            @ApiResponse(responseCode = "500", description = "An unexpected error occurred."),
+    })
+    public ResponseEntity<Response> readVotingResults() {
+        List<VotingResults> results = this.service.readResults();
+        Response response = new Response(HttpStatus.OK.value(),HttpStatus.OK.name(), results);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
