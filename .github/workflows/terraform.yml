@@ -86,7 +86,7 @@ jobs:
           terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -auto-approve
 
       - name: Terraform Plan
-        if: steps.read-destroy-config.outputs.destroy == 'true'
+        if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-plan
         run: cd infra &&
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} &&
@@ -97,10 +97,7 @@ jobs:
         id: terraform-apply-database-and-cache
         run: cd infra && \
           terraform workspace select dev || terraform workspace new dev && \
-          terraform apply \
-          -target=aws_db_instance.postgres \
-          -target=aws_elasticache_cluster.redis \
-          -var-file="./envs/dev/terraform.tfvars" \
+          terraform apply "${{ inputs.environment }}.plan"
           -var="database_name=postgres" \
           -var="database_password=postgres" \
           -var="database_username=postgres" \
