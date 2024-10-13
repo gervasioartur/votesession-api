@@ -11,7 +11,7 @@ jobs:
   terraform:
     uses: ./.github/workflows/terraform.yml
     with:
-      environment: develop
+      environment: dev
       aws-assume-role-arn: "${{ vars.AWS_ASSUME_ROLE_ARN }}"
       aws-region: "sa-east-1"
       aws-statefile-s3-bucket: "${{ vars.AWS_STATEFILE_S3_BUCKET }}"
