@@ -1,5 +1,4 @@
 {
-  "develop": false,
-  "dev": false,
+  "dev": true,
   "prod": false
 }
