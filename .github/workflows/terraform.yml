@@ -97,7 +97,8 @@ jobs:
         id: terraform-apply-database-and-cache
         run: cd infra && \
           terraform workspace select dev || terraform workspace new dev && \
-          terraform apply "${{ inputs.environment }}.plan"
+          terraform apply "${{ inputs.environment }}.plan" \
+          -lock=false \
           -var="database_name=postgres" \
           -var="database_password=postgres" \
           -var="database_username=postgres" \
