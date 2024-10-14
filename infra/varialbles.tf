@@ -49,33 +49,33 @@ variable "redis_cluster_name" {
 }
 
 # EC2 variables
-variable "deployer_key_name" {
-  type = string
-}
-
-variable "ami_instance" {
-  type = string
-}
-variable "ami_instance_type" {
-  type = string
-}
-
-variable "docker_username" {
-  type = string
-}
-
-variable "docker_password" {
-  type = string
-}
-
-variable "image_name" {
-  type = string
-}
-
-variable "image_tag" {
-  type = string
-}
-
-variable "server_instance_name" {
-  type = string
-}
+# variable "deployer_key_name" {
+#   type = string
+# }
+#
+# variable "ami_instance" {
+#   type = string
+# }
+# variable "ami_instance_type" {
+#   type = string
+# }
+#
+# variable "docker_username" {
+#   type = string
+# }
+#
+# variable "docker_password" {
+#   type = string
+# }
+#
+# variable "image_name" {
+#   type = string
+# }
+#
+# variable "image_tag" {
+#   type = string
+# }
+#
+# variable "server_instance_name" {
+#   type = string
+# }
