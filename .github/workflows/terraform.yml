@@ -101,16 +101,3 @@ jobs:
         run: cd infra &&
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} &&
           terraform apply "${{ inputs.environment }}.plan"
-
-      - name: Get DB Endpoint
-        id: database-endpoint
-        run: echo "DB_ENDPOINT=$(terraform output -raw db_endpoint)" >> $GITHUB_ENV
-
-      - name: Get Redis Endpoint
-        id: redis-endpoint
-        run: echo "REDIS_ENDPOINT=$(terraform output -raw redis_endpoint)" >> $GITHUB_ENV
-
-      - name: Use DB and Redis endpoints
-        run: |
-          echo "Database Endpoint: $DB_ENDPOINT"
-          echo "Redis Endpoint: $REDIS_ENDPOINT"
