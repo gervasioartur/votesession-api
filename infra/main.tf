@@ -98,7 +98,7 @@ output "db_endpoint" {
 
 # Output of Redis cluster
 output "redis_endpoint" {
-  value = aws_elasticache_cluster.redis.configuration_endpoint[0].address
+  value = aws_elasticache_cluster.redis.configuration_endpoint
 }
 
 # Outputs to show instance IP and SSH key
