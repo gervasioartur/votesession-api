@@ -37,7 +37,6 @@ on:
         type: string
         required: true
 
-
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -88,31 +87,31 @@ jobs:
       - name: Terraform Plan
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-plan
-        run: cd infra && terraform workspace select dev || terraform workspace new dev && \
+        run: cd infra && \
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
           terraform plan \
-          -var-file="./envs/dev/terraform.tfvars" \
-          -var="database_name=postgres" \
-          -var="database_password=postgres" \
-          -var="database_username=postgres" \
-          -var="database_instance_name=dev-votesession-database" \
-          -var="redis_cluster_id=dev-votesession-cache" \
-          -var="redis_cluster_name=dev-votesession-cache" \
-          -out="dev.plan"
+          -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" \
+          -var="database_name=${{ inputs.database_name }}" \
+          -var="database_password=${{ inputs.database_password }}" \
+          -var="database_username=${{ inputs.database_username }}" \
+          -var="database_instance_name=${{ inputs.database_instance_name }}" \
+          -var="redis_cluster_id=${{ inputs.redis_cluster_id }}" \
+          -var="redis_cluster_name=${{ inputs.redis_cluster_name }}" \
+          -out="${{ inputs.environment }}.plan"
 
       - name: Terraform Apply Database and Cache
         if: steps.read-destroy-config.outputs.destroy != 'true'
         id: terraform-apply-database-and-cache
         run: cd infra && \
-          terraform workspace select dev || terraform workspace new dev && \
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
           terraform apply "${{ inputs.environment }}.plan" \
           -lock=false \
-          -var="database_name=postgres" \
-          -var="database_password=postgres" \
-          -var="database_username=postgres" \
-          -var="database_instance_name=dev-votesession-database" \
-          -var="redis_cluster_id=dev-votesession-cache" \
-          -var="redis_cluster_name=dev-votesession-cache"
-
+          -var="database_name=${{ inputs.database_name }}" \
+          -var="database_password=${{ inputs.database_password }}" \
+          -var="database_username=${{ inputs.database_username }}" \
+          -var="database_instance_name=${{ inputs.database_instance_name }}" \
+          -var="redis_cluster_id=${{ inputs.redis_cluster_id }}" \
+          -var="redis_cluster_name=${{ inputs.redis_cluster_name }}"
 
       - name: Get DB Endpoint
         id: database-endpoint
