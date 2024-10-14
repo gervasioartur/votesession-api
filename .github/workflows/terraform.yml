@@ -104,11 +104,11 @@ jobs:
         id: capture-outputs
         run: |
           cd infra
-          terraform output -json > terraform_outputs.json
+          terraform output -json > "${{ inputs.environment }}_terraform_outputs.json"
           echo "Terraform outputs captured."
 
       - name: Upload Outputs as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: terraform-outputs
-          path: infra/terraform_outputs.json
+          path: "infra/${{ inputs.environment }}_terraform_outputs.json"
