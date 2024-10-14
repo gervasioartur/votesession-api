@@ -79,6 +79,7 @@
 
 # Create database instance
 resource "aws_db_instance" "postgres" {
+  identifier = var.database_instance_name
   allocated_storage = var.database_allocated_storage
   max_allocated_storage = var.database_max_allocated_storage
   engine = "postgres"
