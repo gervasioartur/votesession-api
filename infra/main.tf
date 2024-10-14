@@ -100,9 +100,10 @@ resource "aws_db_instance" "postgres" {
 resource "aws_elasticache_cluster" "redis" {
   cluster_id = var.redis_cluster_id
   engine = "redis"
+  engine_version = "7.x"
   node_type =  var.redis_node_type
   num_cache_nodes = 1
-  parameter_group_name = "default.redis6.x"
+  parameter_group_name = "default.redis7"
 
   tags = {
     Name = var.redis_cluster_name
