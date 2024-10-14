@@ -14,6 +14,17 @@ jobs:
 
       - name: Set up SSH
         run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "Host *" >> ~/.ssh/config
+          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+      
+      - name: Verify SSH Configuration
+        run: |
+          # Crie o diretório .ssh se não existir
+          mkdir -p ~/.ssh
+          
           echo "Verificando se o diretório .ssh existe:"
           ls -la ~/.ssh
           echo "------------------------------------"
@@ -44,6 +55,7 @@ jobs:
           else
             echo "Arquivo de configuração SSH não encontrado!"
           fi
+
 
       - name: Deploy to EC2
         run: |
