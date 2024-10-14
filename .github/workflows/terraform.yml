@@ -108,7 +108,7 @@ jobs:
             -var="database_instance_name=${{ inputs.database_instance_name }}" \
             -var="redis_cluster_id=${{ inputs.redis_cluster_id }}" \
             -var="redis_cluster_name=${{ inputs.redis_cluster_name }}" \
-            "dev.plan"
+            "${{ inputs.environment }}.plan"
 
       - name: Get DB Endpoint
         id: database-endpoint
