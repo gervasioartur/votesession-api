@@ -101,14 +101,7 @@ jobs:
         run: |
           cd infra && \
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
-          terraform apply -auto-approve \
-            -var="database_name=${{ inputs.database_name }}" \
-            -var="database_password=${{ inputs.database_password }}" \
-            -var="database_username=${{ inputs.database_username }}" \
-            -var="database_instance_name=${{ inputs.database_instance_name }}" \
-            -var="redis_cluster_id=${{ inputs.redis_cluster_id }}" \
-            -var="redis_cluster_name=${{ inputs.redis_cluster_name }}" \
-            "${{ inputs.environment }}.plan"
+          terraform apply "${{ inputs.environment }}.plan" -auto-approve
 
       - name: Get DB Endpoint
         id: database-endpoint
