@@ -106,11 +106,6 @@ output "db_endpoint" {
   value = aws_db_instance.postgres.endpoint
 }
 
-# Output of Redis cluster
-output "redis_endpoint" {
-  value = "${aws_elasticache_cluster.redis.cache_nodes[0].address}:${aws_elasticache_cluster.redis.port}"
-}
-
 # Outputs to show instance IP and SSH key
 output "instance_public_ip" {
   value = aws_instance.docker_instance.public_ip
