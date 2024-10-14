@@ -42,39 +42,6 @@ resource "aws_db_instance" "postgres" {
   }
 }
 
-# Security group to allow access to ElasticCache Redis
-resource "aws_security_group" "redis_sg" {
-  name = "redis_sg"
-
-  ingress {
-    from_port   = 6379
-    to_port     = 6379
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "redis_sg"
-  }
-}
-
-# Subnet Group for Redis Cluster
-resource "aws_elasticache_subnet_group" "redis_subnet_group" {
-  name       = "redis_subnet_group"
-  subnet_ids = var.subnet_ids
-
-  tags = {
-    Name = "redis_subnet_group"
-  }
-}
-
 # Create ElasticCache Redis
 resource "aws_elasticache_cluster" "redis" {
   cluster_id = var.redis_cluster_id
@@ -83,10 +50,6 @@ resource "aws_elasticache_cluster" "redis" {
   node_type =  var.redis_node_type
   num_cache_nodes = 1
   parameter_group_name = "default.redis7"
-
-  # VPC Configuration
-  security_group_ids   = [aws_security_group.redis_sg.id]
-  subnet_group_name    = aws_elasticache_subnet_group.redis_subnet_group.name
 
   tags = {
     Name = var.redis_cluster_name
