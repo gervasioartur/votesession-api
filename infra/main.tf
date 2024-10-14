@@ -70,6 +70,13 @@ resource "aws_security_group" "allow_ssh_http" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+ ingress {
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -90,7 +97,6 @@ resource "aws_instance" "docker_instance" {
               amazon-linux-extras install docker -y
               service docker start
               usermod -a -G docker ec2-user
-              docker ps
               EOF
 
   # Associate a security group
