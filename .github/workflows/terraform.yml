@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       is-to-destroy:
-        type: boolean
+        type: string
         required: true
       environment:
         type: string
