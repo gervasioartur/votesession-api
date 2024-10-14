@@ -12,3 +12,8 @@ database_instance_name=""
 redis_cluster_id=""
 redis_node_type="cache.t3.micro"
 redis_cluster_name=""
+# EC2 variables
+deployer_key_name=""
+ami_instance =""
+ami_instance_type="t2.micro"
+server_instance_name=""

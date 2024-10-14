@@ -1,4 +1,4 @@
-name: "DEV DEPLOY"
+name: "DEPLOY INFRA"
 on:
   workflow_dispatch:
 
@@ -8,7 +8,6 @@ permissions:
 
 jobs:
   terraform:
-    if: github.ref == 'refs/heads/develop'
     uses: ./.github/workflows/terraform.yml
     with:
       environment: dev
@@ -22,3 +21,6 @@ jobs:
       database_instance_name: "${{ vars.DATABASE_INSTANCE_NAME }}"
       redis_cluster_id: "${{ vars.REDIS_CLUSTER_ID }}"
       redis_cluster_name: "${{ vars.REDIS_CLUSTER_NAME }}"
+      deployer_key_name: "${{ vars.DEPLOYER_KEY_NAME }}"
+      ami_instance: "${{ vars.AMI_INSTANCE }}"
+      server_instance_name: "${{ vars.SERVER_INSTANCE_NAME }}"
