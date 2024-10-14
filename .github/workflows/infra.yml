@@ -1,6 +1,15 @@
 name: "DEPLOY INFRA"
 on:
   workflow_dispatch:
+    inputs:
+      is-to-destroy:
+        description: "Defina se deseja destruir a infraestrutura"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 permissions:
   id-token: write
@@ -10,6 +19,7 @@ jobs:
   terraform:
     uses: ./.github/workflows/terraform.yml
     with:
+      is-to-destroy: "${{ inputs.is-to-destroy }}"
       environment: dev
       aws-assume-role-arn: "${{ vars.AWS_ASSUME_ROLE_ARN }}"
       aws-region: "sa-east-1"
