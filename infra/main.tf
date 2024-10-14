@@ -42,20 +42,6 @@ resource "aws_db_instance" "postgres" {
   }
 }
 
-# Create ElasticCache Redis
-resource "aws_elasticache_cluster" "redis" {
-  cluster_id = var.redis_cluster_id
-  engine = "redis"
-  engine_version = "7.0"
-  node_type =  var.redis_node_type
-  num_cache_nodes = 1
-  parameter_group_name = "default.redis7"
-
-  tags = {
-    Name = var.redis_cluster_name
-  }
-}
-
 # Create SSH key in order to access the EC2 instance
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
