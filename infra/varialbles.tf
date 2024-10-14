@@ -35,19 +35,6 @@ variable "database_instance_name" {
   type = string
 }
 
-# Elastic Redis Cache
-variable "redis_cluster_id" {
-  type = string
-}
-
-variable "redis_node_type" {
-  type = string
-}
-
-variable "redis_cluster_name" {
-  type = string
-}
-
 # EC2 variables
 variable "deployer_key_name" {
   type = string

@@ -33,12 +33,6 @@ on:
       database_instance_name:
         type: string
         required: true
-      redis_cluster_id:
-        type: string
-        required: true
-      redis_cluster_name:
-        type: string
-        required: true
       deployer_key_name:
         type: string
         required: true
@@ -86,12 +80,12 @@ jobs:
       - name: Terraform Destroy
         if: inputs.is-to-destroy == 'true'        
         id: terraform-destroy
-        run: cd infra && terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && timeout 300s terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -var="database_name=${{ inputs.database_name }}" -var="database_password=${{ inputs.database_password }}" -var="database_username=${{ inputs.database_username }}" -var="database_instance_name=${{ inputs.database_instance_name }}" -var="redis_cluster_id=${{ inputs.redis_cluster_id }}" -var="redis_cluster_name=${{ inputs.redis_cluster_name }}" -var="deployer_key_name=${{ inputs.deployer_key_name }}" -var="server_instance_name=${{ inputs.server_instance_name }}" -auto-approve
+        run: cd infra && terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && timeout 300s terraform destroy -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -var="database_name=${{ inputs.database_name }}" -var="database_password=${{ inputs.database_password }}" -var="database_username=${{ inputs.database_username }}" -var="database_instance_name=${{ inputs.database_instance_name }}"  -var="deployer_key_name=${{ inputs.deployer_key_name }}" -var="server_instance_name=${{ inputs.server_instance_name }}" -auto-approve
 
       - name: Terraform Plan
         if: inputs.is-to-destroy == 'false'        
         id: terraform-plan
-        run: cd infra && terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && timeout 300s terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -var="database_name=${{ inputs.database_name }}" -var="database_password=${{ inputs.database_password }}" -var="database_username=${{ inputs.database_username }}" -var="database_instance_name=${{ inputs.database_instance_name }}" -var="redis_cluster_id=${{ inputs.redis_cluster_id }}" -var="redis_cluster_name=${{ inputs.redis_cluster_name }}" -var="deployer_key_name=${{ inputs.deployer_key_name }}" -var="server_instance_name=${{ inputs.server_instance_name }}" -out="${{ inputs.environment }}.plan"
+        run: cd infra && terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && timeout 300s terraform plan -var-file="./envs/${{ inputs.environment }}/terraform.tfvars" -var="database_name=${{ inputs.database_name }}" -var="database_password=${{ inputs.database_password }}" -var="database_username=${{ inputs.database_username }}" -var="database_instance_name=${{ inputs.database_instance_name }}"  -var="deployer_key_name=${{ inputs.deployer_key_name }}" -var="server_instance_name=${{ inputs.server_instance_name }}" -out="${{ inputs.environment }}.plan"
 
       - name: Terraform Apply
         if: inputs.is-to-destroy == 'false'        
