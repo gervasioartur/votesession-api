@@ -6,7 +6,7 @@ database_instance_class= "db.t3.micro"
 database_name = ""
 database_password = ""
 database_username = ""
-database_parameter_group_name = "default.postgres13"
+database_parameter_group_name = "default.postgres14"
 database_instance_name=""
 # Elastic Redis Cache
 redis_cluster_id=""
