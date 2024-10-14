@@ -1,7 +1,7 @@
 # Database instance variables
 database_allocated_storage = 20
 database_max_allocated_storage = 100
-database_engine_version = "14.8"
+database_engine_version = "14.7"
 database_instance_class= "db.t3.micro"
 database_name = ""
 database_password = ""
