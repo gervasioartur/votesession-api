@@ -15,10 +15,26 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ vars.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           echo "Host *" >> ~/.ssh/config
           echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+      
+      - name: Verify SSH Configuration
+        run: |
+          # Verifique a chave privada
+          echo "Conteúdo da chave privada:"
+          cat ~/.ssh/id_rsa
+          echo "------------------------------------"
+          
+          # Verifique as permissões da chave
+          echo "Permissões da chave:"
+          ls -l ~/.ssh/id_rsa
+          echo "------------------------------------"
+          
+          # Verifique o arquivo de configuração SSH
+          echo "Conteúdo do arquivo de configuração SSH:"
+          cat ~/.ssh/config
 
       - name: Deploy to EC2
         run: |
