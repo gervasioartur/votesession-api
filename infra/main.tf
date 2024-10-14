@@ -1,3 +1,26 @@
+# Security group to allow access to RDS
+resource "aws_security_group" "rds_sg" {
+  name = "rds_sg"
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rds_sg"
+  }
+}
+
 # Create database instance
 resource "aws_db_instance" "postgres" {
   identifier = var.database_instance_name
@@ -12,9 +35,33 @@ resource "aws_db_instance" "postgres" {
   parameter_group_name = var.database_parameter_group_name
   publicly_accessible = true
   skip_final_snapshot = true
+  vpc_security_group_ids   = [aws_security_group.rds_sg.id]
 
   tags = {
     Name = var.database_instance_name
+  }
+}
+
+# Security group to allow access to ElasticCache Redis
+resource "aws_security_group" "ecr_sg" {
+  name = "ecr_sg"
+
+  ingress {
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "ecr_sg"
   }
 }
 
@@ -26,6 +73,7 @@ resource "aws_elasticache_cluster" "redis" {
   node_type =  var.redis_node_type
   num_cache_nodes = 1
   parameter_group_name = "default.redis7"
+  vpc_security_group_ids   = [aws_security_group.ecr_sg.id]
 
   tags = {
     Name = var.redis_cluster_name
@@ -43,7 +91,7 @@ resource "aws_key_pair" "deployer" {
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
-# Security group to allow SSH and HTTP access
+# Security group to allow SSH and HTTP access on EC2 instance
 resource "aws_security_group" "allow_ssh_http" {
   name_prefix = "allow_ssh_http"
   ingress {
