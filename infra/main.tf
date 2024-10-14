@@ -50,7 +50,7 @@ resource "tls_private_key" "ssh_key" {
 
 resource "aws_key_pair" "deployer" {
   key_name = var.deployer_key_name
-  public_key = tls_private_key.ssh_key.public_key_openssh
+  public_key = file("~/.ssh/id_rsa.pub")
 }
 
 # Security group to allow SSH and HTTP access on EC2 instance
