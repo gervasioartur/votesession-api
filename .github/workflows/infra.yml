@@ -22,5 +22,4 @@ jobs:
       redis_cluster_id: "${{ vars.REDIS_CLUSTER_ID }}"
       redis_cluster_name: "${{ vars.REDIS_CLUSTER_NAME }}"
       deployer_key_name: "${{ vars.DEPLOYER_KEY_NAME }}"
-      ami_instance: "${{ vars.AMI_INSTANCE }}"
       server_instance_name: "${{ vars.SERVER_INSTANCE_NAME }}"
