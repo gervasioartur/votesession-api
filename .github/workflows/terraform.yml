@@ -99,3 +99,16 @@ jobs:
         run: cd infra &&
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} &&
           terraform apply "${{ inputs.environment }}.plan"
+
+      - name: Capture Outputs
+        id: capture-outputs
+        run: |
+          cd infra
+          terraform output -json > terraform_outputs.json
+          echo "Terraform outputs captured."
+
+      - name: Upload Outputs as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-outputs
+          path: infra/terraform_outputs.json
