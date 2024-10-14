@@ -47,8 +47,5 @@ jobs:
           fi
 
       - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} << 'EOF'
-            # Comandos Docker que você deseja executar
-            docker ps
-          EOF
+        run: ssh -o StrictHostKeyChecking=no ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} "echo 'Conexão SSH bem-sucedida!'"
+       
