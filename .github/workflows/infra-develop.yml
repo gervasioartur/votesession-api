@@ -1,0 +1,24 @@
+name: "DEV DEPLOY"
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    if: github.ref == 'refs/heads/develop'
+    uses: ./.github/workflows/terraform.yml
+    with:
+      environment: dev
+      aws-assume-role-arn: "${{ vars.AWS_ASSUME_ROLE_ARN }}"
+      aws-region: "sa-east-1"
+      aws-statefile-s3-bucket: "${{ vars.AWS_STATEFILE_S3_BUCKET }}"
+      aws-lock-dynamodb-table: "${{ vars.AWS_LOCK_DYNAMODB_TABLE }}"
+      database_name: "${{ vars.DATABASE_NAME }}"
+      database_password: "${{ vars.DATABASE_PASSWORD }}"
+      database_username: "${{ vars.DATABASE_USERNAME }}"
+      database_instance_name: "${{ vars.DATABASE_INSTANCE_NAME }}"
+      redis_cluster_id: "${{ vars.REDIS_CLUSTER_ID }}"
+      redis_cluster_name: "${{ vars.REDIS_CLUSTER_NAME }}"
