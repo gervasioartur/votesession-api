@@ -97,11 +97,10 @@ jobs:
 
       - name: Terraform Apply Database and Cache
         if: steps.read-destroy-config.outputs.destroy != 'true'
-        id: terraform-apply-database-and-cache
-        run: |
-          cd infra && \
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} && \
-          terraform apply "${{ inputs.environment }}.plan" -auto-approve
+        id: terraform-apply
+        run: cd infra &&
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }} &&
+          terraform apply "${{ inputs.environment }}.plan"
 
       - name: Get DB Endpoint
         id: database-endpoint
