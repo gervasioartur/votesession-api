@@ -116,5 +116,6 @@ jobs:
 
           # Run the application container
             echo "Running application container"
-            docker run -d --name ${{ vars.APPLICATION_NAME }} "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:${{ env.IMAGE_TAG }}"
+            docker run -d --name ${{ vars.APPLICATION_NAME }} "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:${{ env.IMAGE_TAG }}" -p 8080
+            :8080
           EOF
