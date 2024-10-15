@@ -12,16 +12,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Upload as Artifact
-        uses: actions/upload-artifact@v4
+      - name: Download Terraform Outputs Artifact
+        uses: actions/download-artifact@v3
         with:
-          name: dev_terraform_outputs
-          path: dev_terraform_outputs.json
+          name: "dev-terraform-outputs"
+
+      - name: Extract Values from JSON
+        id: extract
+        run: |
+          ssh_private_key_url=$(jq -r '.ssh_private_key_url.value' infra/dev-terraform-outputs.json)
+          ec2_hostname=$(jq -r '.ec2_hostname.value' infra/dev-terraform-outputs.json)
+
+          echo "SSH_PRIVATE_KEY_URL=$ssh_private_key_url" >> $GITHUB_ENV
+          echo "EC2_HOSTNAME=$ec2_hostname" >> $GITHUB_ENV
+
+      - name: Use Extracted Values
+        run: |
+          echo "SSH Private Key URL: $SSH_PRIVATE_KEY_URL"
+          echo "EC2 Hostname: $EC2_HOSTNAME"
       
       - name: Download SSH Key from S3
         run: |
-          curl -o deployer.pem ${{ vars.EC2_PRIVATE_KEY }}
-
+          curl -o deployer.pem $SSH_PRIVATE_KEY_URL
+      
       - name: Set permissions for the SSH key
         run: chmod 600 deployer.pem
     
@@ -30,11 +43,11 @@ jobs:
 
       - name: Add EC2 Host to known_hosts
         run: |
-          ssh-keyscan -H "${{ vars.EC2_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$EC2_HOSTNAME" >> ~/.ssh/known_hosts
 
       - name: Deploy to EC2
         run: |
-          ssh -i deployer.pem "ec2-user@${{ vars.EC2_HOST }}" << 'EOF'
+          ssh -i deployer.pem "ec2-user@$EC2_HOSTNAME" << 'EOF'
             sudo su
             yum update -y
             docker ps
