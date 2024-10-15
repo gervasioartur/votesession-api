@@ -16,6 +16,15 @@ jobs:
         run: |
           curl -o terraform-outputs.json ${{ vars.TERRAFORM_OUTUTS_JSON }}
 
+      - name: Check Contents of JSON File
+        run: |
+          echo "Contents of terraform-outputs.json:"
+          cat terraform-outputs.json
+
+      - name: Validate JSON
+        run: |
+          jq empty terraform-outputs.json
+
       - name: Extract Values from JSON
         id: extract
         run: |
