@@ -24,7 +24,7 @@ jobs:
 
       - name: Add EC2 Host to known_hosts
         run: |
-          ssh-keyscan -H "ec2-${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "ec2-${{ vars.EC2_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Deploy to EC2
         run: |
