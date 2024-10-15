@@ -3,21 +3,15 @@ resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
 }
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
+resource "aws_s3_bucket_public_access_block" "bucket" {
   bucket = aws_s3_bucket.bucket.id
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "s3:GetObject"
-        Effect = "Allow"
-        Resource = "${aws_s3_bucket.bucket.arn}/*"
-        Principal = "*"
-      }
-    ]
-  })
+  block_public_acls       = false
+  ignore_public_acls      = false
+  block_public_policy     = false
+  restrict_public_buckets = false
 }
+
 
 # Security group to allow access to RDS
 resource "aws_security_group" "rds_sg" {
