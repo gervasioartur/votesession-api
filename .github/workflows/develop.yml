@@ -33,7 +33,7 @@ jobs:
       
       - name: Download SSH Key from S3
         run: |
-          curl -o deployer.pem $SSH_PRIVATE_KEY_URL
+          curl -o deployer.pem "$SSH_PRIVATE_KEY_URL"
       
       - name: Set permissions for the SSH key
         run: chmod 600 deployer.pem
@@ -47,8 +47,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -i deployer.pem "ec2-user@$EC2_HOSTNAME" << 'EOF'
-            sudo su
-            yum update -y
+          ssh -i deployer.pem -o StrictHostKeyChecking=no -t "ec2-user@$EC2_HOSTNAME" << 'EOF'
+            sudo yum update -y
             docker ps
           EOF
