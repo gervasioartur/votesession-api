@@ -1,16 +1,24 @@
 # Create S3 bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
-  acl = "public-read"
+  acl = "private"
 }
 
-resource "aws_s3_bucket_public_access_block" "bucket" {
+# Aplicando a política de acesso público ao bucket
+resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.bucket.id
 
-  block_public_acls       = false
-  ignore_public_acls      = false
-  block_public_policy     = false
-  restrict_public_buckets = false
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = "*"
+        Action = "s3:GetObject"
+        Resource = "${aws_s3_bucket.bucket.arn}/*"  # Acesso a todos os objetos do bucket
+      }
+    ]
+  })
 }
 
 
@@ -69,7 +77,6 @@ resource "aws_s3_object" "ssh_private_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}.pem"
   content = tls_private_key.ssh_key.private_key_pem
-  acl = "public-read"
 }
 
 # Save SSH public key on S3 bucket
@@ -77,7 +84,6 @@ resource "aws_s3_object" "ssh_public_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}.pub"
   content = tls_private_key.ssh_key.public_key_openssh
-  acl = "public-read"
 }
 
 # Associate to EC2
@@ -158,5 +164,4 @@ resource "aws_s3_object" "terraform_outputs" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "terraform-outputs/${var.environment}_terraform_outputs.json"
   source = local_file.outputs_json.filename
-  acl = "public-read"
 }
