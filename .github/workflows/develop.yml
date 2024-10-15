@@ -29,6 +29,7 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i deployer.pem "ec2-user@${{ vars.EC2_HOST }}" << 'EOF'
+            sudo su
             yum update -y
             amazon-linux-extras install docker -y
             service docker start
