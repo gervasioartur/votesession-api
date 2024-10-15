@@ -17,7 +17,7 @@ jobs:
         with:
           name: "dev-terraform-outputs"
           path: ./infra
-          workflow: "terraform.yml"
+          workflow: "Terraform Workflow"
 
       - name: Extract Values from JSON
         id: extract
