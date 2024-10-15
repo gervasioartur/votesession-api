@@ -16,17 +16,6 @@ jobs:
         run: |
           curl -O "${{ vars.EC2_PRIVATE_KEY }}"
 
-      - name: Upload SSH Key as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ssh-key
-          path: "${{ vars.DEPLOYER_KEY_NAME }}.pem"
-
-      - name: Download SSH Key Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ssh-key
-
       - name: List dir
         run: ls
 
