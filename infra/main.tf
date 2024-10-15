@@ -3,20 +3,20 @@ resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
 }
 
-resource "aws_s3_bucket_public_access_block" "bucket" {
+resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.bucket.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-resource "aws_s3_bucket_acl" "bucket" {
-  depends_on = [aws_s3_bucket_public_access_block.bucket,]
-
-  bucket = aws_s3_bucket.bucket.id
-  acl    = "public-read"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "s3:GetObject"
+        Effect = "Allow"
+        Resource = "${aws_s3_bucket.bucket.arn}/*"
+        Principal = "*"
+      }
+    ]
+  })
 }
 
 # Security group to allow access to RDS
@@ -74,7 +74,6 @@ resource "aws_s3_object" "ssh_private_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}.pem"
   content = tls_private_key.ssh_key.private_key_pem
-  acl = "public-read"
 }
 
 # Save SSH public key on S3 bucket
@@ -82,7 +81,6 @@ resource "aws_s3_object" "ssh_public_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}.pub"
   content = tls_private_key.ssh_key.public_key_openssh
-  acl = "public-read"
 }
 
 # Associate to EC2
