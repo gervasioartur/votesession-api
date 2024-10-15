@@ -82,7 +82,7 @@ resource "tls_private_key" "ssh_key" {
 # Save SSH private key on S3 bucket
 resource "aws_s3_object" "ssh_private_key" {
   bucket = aws_s3_bucket.bucket.bucket
-  key    = "ssh-keys/${var.deployer_key_name}-key.pem"
+  key    = "ssh-keys/${var.deployer_key_name}.pem"
   content = tls_private_key.ssh_key.private_key_pem
   acl = "public-read"
 }
@@ -90,7 +90,7 @@ resource "aws_s3_object" "ssh_private_key" {
 # Save SSH public key on S3 bucket
 resource "aws_s3_object" "ssh_public_key" {
   bucket = aws_s3_bucket.bucket.bucket
-  key    = "ssh-keys/${var.deployer_key_name}-key.pub"
+  key    = "ssh-keys/${var.deployer_key_name}.pub"
   content = tls_private_key.ssh_key.public_key_openssh
   acl = "public-read"
 }

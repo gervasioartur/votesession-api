@@ -12,55 +12,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ vars.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "Host *" >> ~/.ssh/config
-          echo "    StrictHostKeyChecking no" >> ~/.ssh/config
-
-      - name: Verify SSH Configuration
-        run: |
-          echo "Verificando se o diretório .ssh existe:"
-          ls -la ~/.ssh
-          echo "------------------------------------"
-
-          # Verifique a chave privada
-          echo "Verificando a chave privada:"
-          if [ -f ~/.ssh/id_rsa ]; then
-            echo "Chave privada encontrada."
-            echo "------------------------------------"
-            echo "Permissões da chave:"
-            ls -l ~/.ssh/id_rsa
-            echo "------------------------------------"
-          else
-            echo "Chave privada não encontrada!"
-          fi
-
-          # Verifique o arquivo de configuração SSH
-          echo "Conteúdo do arquivo de configuração SSH:"
-          if [ -f ~/.ssh/config ]; then
-            cat ~/.ssh/config
-          else
-            echo "Arquivo de configuração SSH não encontrado!"
-          fi
-
-      - name: Verify SSH Key
-        run: |
-          echo "Verificando a chave privada:"
-          ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null
-          if [ $? -ne 0 ]; then
-            echo "Chave privada inválida ou corrompida."
-            exit 1
-          else
-            echo "Chave privada é válida."
-          fi
-
       - name: Test SSH Connection
         run: |
           echo "Testando conexão SSH..."
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ vars.EC2_HOST }} 'echo "Chave válida!"'
+          ssh -i "${{ vars.EC2_PRIVATE_KEY }}" "ec2-user@ec2-${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" 'echo "Chave válida!"'
           if [ $? -ne 0 ]; then
             echo "A conexão SSH falhou. A chave pode ser inválida."
             exit 1
@@ -70,7 +25,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ vars.EC2_HOST }} << 'EOF'
+          ssh -i "${{ vars.EC2_PRIVATE_KEY }}" "ec2-user@ec2-${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" << 'EOF'
             # Comandos Docker que você deseja executar
             docker ps
           EOF
