@@ -1,7 +1,7 @@
 # Create S3 bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
-  acl    = "private"
+  aws_s3_bucket_acl = "private"
 }
 
 # Security group to allow access to RDS
@@ -55,7 +55,7 @@ resource "tls_private_key" "ssh_key" {
 }
 
 # Save SSH private key on S3 bucket
-resource "aws_s3_bucket_object" "ssh_private_key" {
+resource "aws_s3_object" "ssh_private_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}-key.pem"
   content = tls_private_key.ssh_key.private_key_pem
@@ -63,7 +63,7 @@ resource "aws_s3_bucket_object" "ssh_private_key" {
 }
 
 # Save SSH public key on S3 bucket
-resource "aws_s3_bucket_object" "ssh_public_key" {
+resource "aws_s3_object" "ssh_public_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}-key.pub"
   content = tls_private_key.ssh_key.public_key_openssh
@@ -142,10 +142,10 @@ output "instance_public_ip" {
 
 # Outputs for private ssh key
 output "ssh_private_key_url" {
-  value = aws_s3_bucket_object.ssh_private_key.url 
+  value = "https://${aws_s3_bucket.bucket.bucket}.s3.amazonaws.com/${aws_s3_object.ssh_private_key.key}"
 }
 
 # Outputs for public ssh key
 output "ssh_public_key" {
-  value = aws_s3_bucket_object.ssh_public_key.url 
+  value = "https://${aws_s3_bucket.bucket.bucket}.s3.amazonaws.com/${aws_s3_object.ssh_public_key.key}"
 }
