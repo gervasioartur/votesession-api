@@ -16,12 +16,6 @@ jobs:
         run: |
           curl -O "${{ vars.EC2_PRIVATE_KEY }}"
 
-      - name: Upload as Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ssh-key
-          path: deployer.pem
-
       - name: Set permissions for the SSH key
         run: chmod 600 "${{ vars.DEPLOYER_KEY_NAME }}"
 
