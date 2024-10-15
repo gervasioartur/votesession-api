@@ -21,7 +21,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -i "${{ vars.DEPLOYER_KEY_NAME }}.pem" "ec2-user@${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" << 'EOF'
+          ssh -i "${{ vars.DEPLOYER_KEY_NAME }}.pem" "ec2-user@${{ vars.EC2_HOST }}" << 'EOF'
             # Comandos Docker que você deseja executar
             docker ps
           EOF
