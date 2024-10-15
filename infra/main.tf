@@ -151,7 +151,7 @@ resource "local_file" "outputs_json" {
 }
 
 # Fazer o upload do arquivo JSON para o S3
-resource "aws_s3_bucket_object" "terraform_outputs" {
+resource "aws_s3_object" "terraform_outputs" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "${var.environment}_terraform_outputs.json"
   source = local_file.outputs_json.filename
