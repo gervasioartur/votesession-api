@@ -6,6 +6,57 @@ on:
       - develop
 
 jobs:
+  build:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+        
+        - name: Download Terraform Outputs Artifact
+          run: |
+            curl -o terraform-outputs.json ${{ vars.TERRAFORM_OUTUTS_JSON }}
+
+        - name: Extract Values from JSON
+          id: extract
+          run: |
+            # Use jq to extract the values from the JSON file
+            db_endpoint=$(jq -r '.db_endpoint' terraform-outputs.json)
+
+            # Set the extracted values as environment variables
+            echo "DB_ENDPOINT=$db_endpoint" >> $GITHUB_ENV
+
+        - name: Log in to Docker Hub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ vars.DOCKER_USERNAME }}
+            password: ${{ vars.DOCKER_PASSWORD }}
+      
+        - name: Set IMAGE_TAG
+          id: set_tag
+          run: |
+            if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+              echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+            elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+              echo "IMAGE_TAG=${{ github.event.release.tag }}" >> $GITHUB_ENV
+            else
+              echo "IMAGE_TAG=latest" >> $GITHUB_ENV # Default value if not on main or develop
+            fi
+
+        - name: Build Docker image
+          run: |
+            docker build \
+              --build-arg SPRING_PROFILES_ACTIVE=dev \
+              --build-arg SPRING_DATASOURCE_URL="jdbc:postgresql://$DB_ENDPOINT/${{ vars.DATABASE_NAME }}" \
+              --build-arg SPRING_DATASOURCE_USERNAME=${{ vars.DATABASE_USERNAME }} \
+              --build-arg SPRING_DATASOURCE_PASSWORD=${{ vars.DATABASE_PASSWORD }} \
+              --build-arg SPRING_JPA_SHOW_SQL=false \
+              --build-arg SPRING_DATA_REDIS_HOST=${{ vars.SPRING_DATA_REDIS_HOST }} \
+              -t "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG" .
+
+        - name: Push Docker image
+          run: |
+            docker push "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG"
+
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -20,32 +71,13 @@ jobs:
         id: extract
         run: |
           # Use jq to extract the values from the JSON file
-          db_endpoint=$(jq -r '.db_endpoint' terraform-outputs.json)
           ec2_hostname=$(jq -r '.ec2_hostname' terraform-outputs.json)
-          instance_public_ip=$(jq -r '.instance_public_ip' terraform-outputs.json)
           ssh_private_key_url=$(jq -r '.ssh_private_key_url' terraform-outputs.json)
-          ssh_public_key=$(jq -r '.ssh_public_key' terraform-outputs.json)
 
           # Set the extracted values as environment variables
-          echo "DB_ENDPOINT=$db_endpoint" >> $GITHUB_ENV
           echo "EC2_HOSTNAME=$ec2_hostname" >> $GITHUB_ENV
-          echo "INSTANCE_PUBLIC_IP=$instance_public_ip" >> $GITHUB_ENV
           echo "SSH_PRIVATE_KEY_URL=$ssh_private_key_url" >> $GITHUB_ENV
-          echo "SSH_PUBLIC_KEY=$ssh_public_key" >> $GITHUB_ENV
-
-      - name: Use Extracted Values
-        run: |
-          echo "DB Endpoint: $DB_ENDPOINT"
-          echo "EC2 Hostname: $EC2_HOSTNAME"
-          echo "Instance Public IP: $INSTANCE_PUBLIC_IP"
-          echo "SSH Private Key URL: $SSH_PRIVATE_KEY_URL"
-          echo "SSH Public Key: $SSH_PUBLIC_KEY"
-
-      - name: Use Extracted Values
-        run: |
-          echo "SSH Private Key URL: $SSH_PRIVATE_KEY_URL"
-          echo "EC2 Hostname: $EC2_HOSTNAME"
-      
+    
       - name: Download SSH Key from S3
         run: |
           curl -o deployer.pem "$SSH_PRIVATE_KEY_URL"
@@ -59,10 +91,47 @@ jobs:
       - name: Add EC2 Host to known_hosts
         run: |
           ssh-keyscan -H "$EC2_HOSTNAME" >> ~/.ssh/known_hosts
+        
+      - name: Set IMAGE_TAG
+        id: set_tag
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "IMAGE_TAG=${{ github.event.release.tag }}" >> $GITHUB_ENV
+          else
+            echo "IMAGE_TAG=latest" >> $GITHUB_ENV # Default value if not on main or develop
+          fi
 
       - name: Deploy to EC2
         run: |
           ssh -i deployer.pem -o StrictHostKeyChecking=no -t "ec2-user@$EC2_HOSTNAME" << 'EOF'
             sudo yum update -y
-            docker ps
+            echo "${{ vars.DOCKER_PASSWORD }}" | docker login -u "${{ vars.DOCKER_USERNAME }}" --password-stdin
+            
+            # Check if the Redis container exists
+            if [ "$(docker ps -q -f name=${{ vars.SPRING_DATA_REDIS_HOST }})" ]; then
+              echo "Removing existing Redis container..."
+              docker stop -f ${{ vars.SPRING_DATA_REDIS_HOST }}
+              docker rm -f ${{ vars.SPRING_DATA_REDIS_HOST }}
+            fi
+
+            # Run Redis container
+            echo "Starting Redis container..."
+            docker run -d -p 6379:6379 --name ${{ vars.SPRING_DATA_REDIS_HOST }} redis:6.0
+
+            # Check if the application container exists, and remove it if it does
+            if [ "$(docker ps -q -f name=${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }})" ]; then
+              echo "Removing existing application container..."
+              docker stop -f ${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}
+              docker rm -f ${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}
+            fi
+
+            # Pull the application image
+            echo "Pulling application image"
+            docker pull "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG"
+
+          # Run the application container
+            echo "Running application container"
+            docker run -d -p 8080:8080 "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG"
           EOF

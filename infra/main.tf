@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
 }
 
-# Aplicando a política de acesso público ao bucket
+# Applying public access policy
 resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.bucket.id
 
@@ -14,7 +14,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
         Effect = "Allow"
         Principal = "*"
         Action = "s3:GetObject"
-        Resource = "${aws_s3_bucket.bucket.arn}/*"  # Acesso a todos os objetos do bucket
+        Resource = "${aws_s3_bucket.bucket.arn}/*"
       }
     ]
   })
