@@ -102,26 +102,13 @@ jobs:
           ssh -i deployer.pem -o StrictHostKeyChecking=no -t "ec2-user@$EC2_HOSTNAME" << 'EOF'
             sudo yum update -y
             echo "${{ vars.DOCKER_PASSWORD }}" | docker login -u "${{ vars.DOCKER_USERNAME }}" --password-stdin
-            
-            # Check if the Redis container exists
-            if [ "$(docker ps -q -f name=${{ vars.SPRING_DATA_REDIS_HOST }})" ]; then
-              echo "Removing existing Redis container..."
-              docker stop ${{ vars.SPRING_DATA_REDIS_HOST }}
-              docker rm  ${{ vars.SPRING_DATA_REDIS_HOST }}
-            fi
-
-            docker ps
+          
+            docker stop $(docker ps -q)
+            docker rm $(docker ps -aq)
 
             # Run Redis container
             echo "Starting Redis container..."
             docker run -p 6379:6379 --name ${{ vars.SPRING_DATA_REDIS_HOST }} redis:6.0
-
-            # Check if the application container exists, and remove it if it does
-            if [ "$(docker ps -q -f name=${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }})" ]; then
-              echo "Removing existing application container..."
-              docker stop ${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}
-              docker rm  ${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}
-            fi
 
             # Pull the application image
             echo "Pulling application image"
