@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
-    }
-    tls = {
-      source  = "hashicorp/tls"
-      version = "~> 3.0"
-    }
-  }
-}
-
 # Security group to allow access to RDS
 resource "aws_security_group" "rds_sg" {
   name = "rds_sg"
