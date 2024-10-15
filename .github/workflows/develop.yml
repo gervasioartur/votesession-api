@@ -16,16 +16,13 @@ jobs:
         run: |
           curl -O "${{ vars.EC2_PRIVATE_KEY }}"
 
-      - name: List dir
-        run: ls
-
       - name: Set permissions for the SSH key
         run: chmod 600 "${{ vars.DEPLOYER_KEY_NAME }}.pem"
 
       - name: Test SSH Connection
         run: |
           echo "Testando conexão SSH..."
-          ssh -i "dev-votesession-deployer.pem" "ec2-user@${{ vars.EC2_HOST }}" 'echo "Chave válida!"'
+          ssh -i "dev-votesession-deployer.pem" "${{ vars.EC2_HOST }}" 'echo "Chave válida!"'
           if [ $? -ne 0 ]; then
             echo "A conexão SSH falhou. A chave pode ser inválida."
             exit 1
@@ -35,7 +32,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -i "${{ vars.DEPLOYER_KEY_NAME }}.pem" "ec2-user@${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" << 'EOF'
+          ssh -i "${{ vars.DEPLOYER_KEY_NAME }}.pem" "${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" << 'EOF'
             # Comandos Docker que você deseja executar
             docker ps
           EOF
