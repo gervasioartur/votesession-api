@@ -17,7 +17,7 @@ jobs:
           curl -O "${{ vars.EC2_PRIVATE_KEY }}"
 
       - name: Set permissions for the SSH key
-        run: chmod 600 "${{ vars.DEPLOYER_KEY_NAME }}.pem"
+        run: chmod 400 "${{ vars.DEPLOYER_KEY_NAME }}.pem"
 
       - name: Deploy to EC2
         run: |
