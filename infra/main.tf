@@ -174,3 +174,8 @@ output "ssh_private_key_url" {
 output "ssh_public_key" {
   value = "https://${aws_s3_bucket.bucket.bucket}.s3.amazonaws.com/${aws_s3_object.ssh_public_key.key}"
 }
+
+# Output the hostname of the EC2 instance
+output "ec2_hostname" {
+  value = aws_instance.docker_instance.public_dns
+}
