@@ -22,10 +22,6 @@ jobs:
       - name: Set permissions for the SSH key
         run: chmod 600 "${{ vars.DEPLOYER_KEY_NAME }}.pem"
 
-      - name: Add EC2 Host Key
-        run: |
-          ssh-keyscan -H "ec2-${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" >> ~/.ssh/known_hosts
-
       - name: Test SSH Connection
         run: |
           echo "Testando conexão SSH..."
