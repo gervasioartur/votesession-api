@@ -109,3 +109,4 @@ jobs:
         with:
           name: "${{ inputs.environment }}-terraform-outputs" 
           path: "infra/${{ inputs.environment }}_terraform_outputs.json"
+    
