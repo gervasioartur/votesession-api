@@ -16,8 +16,8 @@ jobs:
         run: |
           curl -o terraform-outputs.json ${{ vars.TERRAFORM_OUTUTS_JSON }}
 
-      - name: List Files in Directory
-        run: ls -al
+      - name: Set Permissions (if needed)
+        run: chmod +r terraform-outputs.json
 
       - name: Extract Values from JSON
         id: extract
