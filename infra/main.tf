@@ -138,27 +138,21 @@ resource "aws_instance" "docker_instance" {
   }
 }
 
-# Outputs of postgres database
-output "db_endpoint" {
-  value = aws_db_instance.postgres.endpoint
+# Generate JSON file for outputs
+resource "local_file" "outputs_json" {
+  content = jsonencode({
+    db_endpoint          = aws_db_instance.postgres.endpoint
+    instance_public_ip   = aws_instance.docker_instance.public_ip
+    ssh_private_key_url  = "https://${aws_s3_bucket.bucket.bucket}.s3.amazonaws.com/${aws_s3_object.ssh_private_key.key}"
+    ssh_public_key       = "https://${aws_s3_bucket.bucket.bucket}.s3.amazonaws.com/${aws_s3_object.ssh_public_key.key}"
+    ec2_hostname         = aws_instance.docker_instance.public_dns
+  })
+  filename = "${path.module}/infra/${var.environment}_terraform_outputs.json"
 }
 
-# Outputs to show instance IP and SSH key
-output "instance_public_ip" {
-  value = aws_instance.docker_instance.public_ip
-}
-
-# Outputs for private ssh key
-output "ssh_private_key_url" {
-  value = "https://${aws_s3_bucket.bucket.bucket}.s3.amazonaws.com/${aws_s3_object.ssh_private_key.key}"
-}
-
-# Outputs for public ssh key
-output "ssh_public_key" {
-  value = "https://${aws_s3_bucket.bucket.bucket}.s3.amazonaws.com/${aws_s3_object.ssh_public_key.key}"
-}
-
-# Output the hostname of the EC2 instance
-output "ec2_hostname" {
-  value = aws_instance.docker_instance.public_dns
+# Fazer o upload do arquivo JSON para o S3
+resource "aws_s3_bucket_object" "terraform_outputs" {
+  bucket = aws_s3_bucket.bucket.bucket
+  key    = "${var.environment}_terraform_outputs.json"
+  source = local_file.outputs_json.filename
 }

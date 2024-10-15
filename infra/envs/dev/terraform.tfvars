@@ -1,3 +1,4 @@
+environment="dev"
 # Bucket variables
 bucket_name=""
 # Database instance variables
