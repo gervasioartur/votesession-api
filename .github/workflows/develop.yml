@@ -14,7 +14,7 @@ jobs:
       
       - name: Download Terraform Outputs Artifact
         run: |
-          curl -o terraform_outputs.json "$TERRAFORM_OUTUTS_JSON"
+          curl -o terraform_outputs.json ${{ vars.TERRAFORM_OUTUTS_JSON }}
 
       - name: Extract Values from JSON
         id: extract
