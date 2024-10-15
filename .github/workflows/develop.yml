@@ -14,16 +14,32 @@ jobs:
       
       - name: Download Terraform Outputs Artifact
         run: |
-          curl -o terraform_outputs.json ${{ vars.TERRAFORM_OUTUTS_JSON }}
+          curl -o terraform-outputs.json ${{ vars.TERRAFORM_OUTUTS_JSON }}
 
       - name: Extract Values from JSON
         id: extract
         run: |
-          ssh_private_key_url=$(jq -r '.ssh_private_key_url' terraform_outputs.json)
-          ec2_hostname=$(jq -r '.ec2_hostname' terraform_outputs.json)
+          # Use jq to extract the values from the JSON file
+          db_endpoint=$(jq -r '.db_endpoint' terraform-outputs.json)
+          ec2_hostname=$(jq -r '.ec2_hostname' dev-terraform-outputs.json)
+          instance_public_ip=$(jq -r '.instance_public_ip' dev-terraform-outputs.json)
+          ssh_private_key_url=$(jq -r '.ssh_private_key_url' dev-terraform-outputs.json)
+          ssh_public_key=$(jq -r '.ssh_public_key' dev-terraform-outputs.json)
 
-          echo "SSH_PRIVATE_KEY_URL=$ssh_private_key_url" >> $GITHUB_ENV
+          # Set the extracted values as environment variables
+          echo "DB_ENDPOINT=$db_endpoint" >> $GITHUB_ENV
           echo "EC2_HOSTNAME=$ec2_hostname" >> $GITHUB_ENV
+          echo "INSTANCE_PUBLIC_IP=$instance_public_ip" >> $GITHUB_ENV
+          echo "SSH_PRIVATE_KEY_URL=$ssh_private_key_url" >> $GITHUB_ENV
+          echo "SSH_PUBLIC_KEY=$ssh_public_key" >> $GITHUB_ENV
+
+      - name: Use Extracted Values
+        run: |
+          echo "DB Endpoint: $DB_ENDPOINT"
+          echo "EC2 Hostname: $EC2_HOSTNAME"
+          echo "Instance Public IP: $INSTANCE_PUBLIC_IP"
+          echo "SSH Private Key URL: $SSH_PRIVATE_KEY_URL"
+          echo "SSH Public Key: $SSH_PUBLIC_KEY"
 
       - name: Use Extracted Values
         run: |
