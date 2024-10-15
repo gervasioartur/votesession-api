@@ -1,6 +1,7 @@
 # Create S3 bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
+  acl = "public-read"
 }
 
 resource "aws_s3_bucket_public_access_block" "bucket" {
