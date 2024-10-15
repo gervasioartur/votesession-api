@@ -1,3 +1,5 @@
+# Bucket variables
+bucket_name=""
 # Database instance variables
 database_allocated_storage = 20
 database_max_allocated_storage = 100
