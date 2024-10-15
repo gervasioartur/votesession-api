@@ -1,7 +1,6 @@
 # Create S3 bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
-  aws_s3_bucket_acl = "private"
 }
 
 # Security group to allow access to RDS
@@ -59,7 +58,6 @@ resource "aws_s3_object" "ssh_private_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}-key.pem"
   content = tls_private_key.ssh_key.private_key_pem
-  acl    = "private"  
 }
 
 # Save SSH public key on S3 bucket
@@ -67,7 +65,6 @@ resource "aws_s3_object" "ssh_public_key" {
   bucket = aws_s3_bucket.bucket.bucket
   key    = "ssh-keys/${var.deployer_key_name}-key.pub"
   content = tls_private_key.ssh_key.public_key_openssh
-  acl    = "private"  
 }
 
 # Associate to EC2
