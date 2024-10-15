@@ -2,6 +2,10 @@
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
   acl = "public-read"
+  block_public_acls = false
+  ignore_public_acls = false
+  block_public_policy = false
+  restrict_public_buckets = false
 }
 
 # Security group to allow access to RDS
