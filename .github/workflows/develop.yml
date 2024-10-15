@@ -16,6 +16,8 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: "dev-terraform-outputs"
+          path: ./infra
+          workflow: "terraform.yml"
 
       - name: Extract Values from JSON
         id: extract
