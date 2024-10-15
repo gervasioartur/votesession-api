@@ -18,6 +18,10 @@ jobs:
 
       - name: Set permissions for the SSH key
         run: chmod 400 "${{ vars.DEPLOYER_KEY_NAME }}.pem"
+    
+      - name: Add EC2 Host to known_hosts
+        run: |
+          ssh-keyscan -H "ec2-${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" >> ~/.ssh/known_hosts
 
       - name: Deploy to EC2
         run: |
