@@ -25,7 +25,7 @@ jobs:
       - name: Test SSH Connection
         run: |
           echo "Testando conexão SSH..."
-          ssh -i "${{ vars.DEPLOYER_KEY_NAME }}.pem" "ec2-user@ec2-${{ vars.EC2_HOST }}.sa-east-1.compute.amazonaws.com" 'echo "Chave válida!"'
+          ssh -i "${{ vars.DEPLOYER_KEY_NAME }}.pem" "${{ vars.EC2_HOST }}" 'echo "Chave válida!"'
           if [ $? -ne 0 ]; then
             echo "A conexão SSH falhou. A chave pode ser inválida."
             exit 1
