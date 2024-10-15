@@ -138,6 +138,16 @@ resource "aws_instance" "docker_instance" {
   ami = var.ami_instance
   instance_type = var.ami_instance_type
   key_name = aws_key_pair.deployer.key_name
+  # Installing docker and run container
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo su
+              yum update -y
+              yum install -y docker
+              service docker start
+              usermod -a -G docker ec2-user
+              EOF
+
   # Associate a security group
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
 
