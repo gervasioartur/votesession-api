@@ -14,10 +14,10 @@ jobs:
       
       - name: Download SSH Key from S3
         run: |
-          curl -O "${{ vars.EC2_PRIVATE_KEY }}"
+          curl -O "deployer.pem" "${{ vars.EC2_PRIVATE_KEY }}"
 
       - name: Set permissions for the SSH key
-        run: chmod 600 "${{ vars.DEPLOYER_KEY_NAME }}.pem"
+        run: chmod 600 deployer.pem
     
       - name: Create SSH directory
         run: mkdir -p ~/.ssh
@@ -28,7 +28,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -i dev-votesession-deployer.pem ec2-user@ec2-18-231-247-223.sa-east-1.compute.amazonaws.com << 'EOF'
+          ssh -i deployer.pem "ec2-user@${{ vars.EC2_HOST }}" << 'EOF'
             # Comandos Docker que você deseja executar
             docker ps
           EOF
