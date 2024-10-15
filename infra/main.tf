@@ -1,3 +1,9 @@
+# Create S3 bucket
+resource "aws_s3_bucket" "bucket" {
+  bucket = var.bucket_name
+  acl    = "private"
+}
+
 # Security group to allow access to RDS
 resource "aws_security_group" "rds_sg" {
   name = "rds_sg"
@@ -48,6 +54,23 @@ resource "tls_private_key" "ssh_key" {
   rsa_bits = 4096
 }
 
+# Save SSH private key on S3 bucket
+resource "aws_s3_bucket_object" "ssh_private_key" {
+  bucket = aws_s3_bucket.bucket.bucket
+  key    = "ssh-keys/${var.deployer_key_name}-key.pem"
+  content = tls_private_key.ssh_key.private_key_pem
+  acl    = "private"  
+}
+
+# Save SSH public key on S3 bucket
+resource "aws_s3_bucket_object" "ssh_public_key" {
+  bucket = aws_s3_bucket.bucket.bucket
+  key    = "ssh-keys/${var.deployer_key_name}-key.pub"
+  content = tls_private_key.ssh_key.public_key_openssh
+  acl    = "private"  
+}
+
+# Associate to EC2
 resource "aws_key_pair" "deployer" {
   key_name = var.deployer_key_name
   public_key = tls_private_key.ssh_key.public_key_openssh
@@ -117,7 +140,12 @@ output "instance_public_ip" {
   value = aws_instance.docker_instance.public_ip
 }
 
-output "ssh_private_key_pem" {
-  value     = tls_private_key.ssh_key.private_key_pem
-  sensitive = true
+# Outputs for private ssh key
+output "ssh_private_key_url" {
+  value = aws_s3_bucket_object.ssh_private_key.url 
+}
+
+# Outputs for public ssh key
+output "ssh_public_key" {
+  value = aws_s3_bucket_object.ssh_public_key.url 
 }

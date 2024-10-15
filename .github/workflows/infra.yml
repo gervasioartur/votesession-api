@@ -25,6 +25,7 @@ jobs:
       aws-region: "sa-east-1"
       aws-statefile-s3-bucket: "${{ vars.AWS_STATEFILE_S3_BUCKET }}"
       aws-lock-dynamodb-table: "${{ vars.AWS_LOCK_DYNAMODB_TABLE }}"
+      bucket_name: "${{ vars.BUCKET_NAME }}"
       database_name: "${{ vars.DATABASE_NAME }}"
       database_password: "${{ vars.DATABASE_PASSWORD }}"
       database_username: "${{ vars.DATABASE_USERNAME }}"

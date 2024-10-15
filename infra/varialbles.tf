@@ -1,3 +1,8 @@
+# Bucket variables
+variable "bucket_name" {
+   type = string
+}
+
 # Database instance variables
 variable "database_allocated_storage" {
    type = number
