@@ -16,24 +16,15 @@ jobs:
         run: |
           curl -o terraform-outputs.json ${{ vars.TERRAFORM_OUTUTS_JSON }}
 
-      - name: Check Contents of JSON File
-        run: |
-          echo "Contents of terraform-outputs.json:"
-          cat terraform-outputs.json
-
-      - name: Validate JSON
-        run: |
-          jq empty terraform-outputs.json
-
       - name: Extract Values from JSON
         id: extract
         run: |
           # Use jq to extract the values from the JSON file
           db_endpoint=$(jq -r '.db_endpoint' terraform-outputs.json)
-          ec2_hostname=$(jq -r '.ec2_hostname' dev-terraform-outputs.json)
-          instance_public_ip=$(jq -r '.instance_public_ip' dev-terraform-outputs.json)
-          ssh_private_key_url=$(jq -r '.ssh_private_key_url' dev-terraform-outputs.json)
-          ssh_public_key=$(jq -r '.ssh_public_key' dev-terraform-outputs.json)
+          ec2_hostname=$(jq -r '.ec2_hostname' terraform-outputs.json)
+          instance_public_ip=$(jq -r '.instance_public_ip' terraform-outputs.json)
+          ssh_private_key_url=$(jq -r '.ssh_private_key_url' terraform-outputs.json)
+          ssh_public_key=$(jq -r '.ssh_public_key' terraform-outputs.json)
 
           # Set the extracted values as environment variables
           echo "DB_ENDPOINT=$db_endpoint" >> $GITHUB_ENV
