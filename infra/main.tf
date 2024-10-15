@@ -1,7 +1,6 @@
 # Create S3 bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
-  acl = "private"
 }
 
 # Aplicando a política de acesso público ao bucket
