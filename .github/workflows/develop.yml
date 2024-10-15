@@ -23,7 +23,7 @@ jobs:
           path: "${{ vars.DEPLOYER_KEY_NAME }}.pem"
 
       - name: Download SSH Key Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ssh-key
 
