@@ -44,14 +44,7 @@ jobs:
 
         - name: Build Docker image
           run: |
-            docker build \
-              --build-arg SPRING_PROFILES_ACTIVE=dev \
-              --build-arg SPRING_DATASOURCE_URL="jdbc:postgresql://$DB_ENDPOINT/${{ vars.DATABASE_NAME }}" \
-              --build-arg SPRING_DATASOURCE_USERNAME=${{ vars.DATABASE_USERNAME }} \
-              --build-arg SPRING_DATASOURCE_PASSWORD=${{ vars.DATABASE_PASSWORD }} \
-              --build-arg SPRING_JPA_SHOW_SQL=false \
-              --build-arg SPRING_DATA_REDIS_HOST=${{ vars.SPRING_DATA_REDIS_HOST }} \
-              -t "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG" .
+            docker build --build-arg SPRING_PROFILES_ACTIVE=dev --build-arg SPRING_DATASOURCE_URL="jdbc:postgresql://$DB_ENDPOINT/${{ vars.DATABASE_NAME }}" --build-arg SPRING_DATASOURCE_USERNAME=${{ vars.DATABASE_USERNAME }} --build-arg SPRING_DATASOURCE_PASSWORD=${{ vars.DATABASE_PASSWORD }} --build-arg SPRING_JPA_SHOW_SQL=false --build-arg SPRING_DATA_REDIS_HOST=${{ vars.SPRING_DATA_REDIS_HOST }} -t "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG" .
 
         - name: Push Docker image
           run: |

@@ -1,8 +1,6 @@
 # Build stage
-FROM eclipse-temurin:21-jdk AS build
+FROM maven:3.8.5-openjdk-21 AS build
 WORKDIR /app
-COPY mvnw . 
-COPY .mvn .mvn 
 COPY pom.xml . 
 COPY src src 
 
@@ -23,7 +21,7 @@ ENV SPRING_JPA_SHOW_SQL=${SPRING_JPA_SHOW_SQL}
 ENV SPRING_DATA_REDIS_HOST=${SPRING_DATA_REDIS_HOST}
 
 # Building the application, skipping tests
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Runtime stage
 FROM eclipse-temurin:21-jre
