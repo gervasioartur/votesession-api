@@ -19,8 +19,8 @@ jobs:
       - name: Extract Values from JSON
         id: extract
         run: |
-          ssh_private_key_url=$(jq -r '.ssh_private_key_url.value' terraform_outputs.json)
-          ec2_hostname=$(jq -r '.ec2_hostname.value' terraform_outputs.json)
+          ssh_private_key_url=$(jq -r '.ssh_private_key_url' terraform_outputs.json)
+          ec2_hostname=$(jq -r '.ec2_hostname' terraform_outputs.json)
 
           echo "SSH_PRIVATE_KEY_URL=$ssh_private_key_url" >> $GITHUB_ENV
           echo "EC2_HOSTNAME=$ec2_hostname" >> $GITHUB_ENV
