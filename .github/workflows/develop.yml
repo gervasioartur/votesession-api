@@ -112,7 +112,7 @@ jobs:
 
             # Run Redis container
             echo "Starting Redis container..."
-            docker run -p 6379:6379 -d --name ${{ vars.SPRING_DATA_REDIS_HOST }} redis:6.0
+            docker run -p 6379:6379 --name ${{ vars.SPRING_DATA_REDIS_HOST }} redis:6.0 -d
 
             # Check if the application container exists, and remove it if it does
             if [ "$(docker ps -q -f name=${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }})" ]; then
