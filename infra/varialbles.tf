@@ -1,3 +1,8 @@
+# Bucket variables
+variable "bucket_name" {
+   type = string
+}
+
 # Database instance variables
 variable "database_allocated_storage" {
    type = number
@@ -32,19 +37,6 @@ variable "database_parameter_group_name" {
 }
 
 variable "database_instance_name" {
-  type = string
-}
-
-# Elastic Redis Cache
-variable "redis_cluster_id" {
-  type = string
-}
-
-variable "redis_node_type" {
-  type = string
-}
-
-variable "redis_cluster_name" {
   type = string
 }
 

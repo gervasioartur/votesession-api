@@ -1,3 +1,32 @@
+# Create S3 bucket
+resource "aws_s3_bucket" "bucket" {
+  bucket = var.bucket_name
+  acl    = "private"
+}
+
+# Security group to allow access to RDS
+resource "aws_security_group" "rds_sg" {
+  name = "rds_sg"
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rds_sg"
+  }
+}
+
 # Create database instance
 resource "aws_db_instance" "postgres" {
   identifier = var.database_instance_name
@@ -12,23 +41,10 @@ resource "aws_db_instance" "postgres" {
   parameter_group_name = var.database_parameter_group_name
   publicly_accessible = true
   skip_final_snapshot = true
+  vpc_security_group_ids   = [aws_security_group.rds_sg.id]
 
   tags = {
     Name = var.database_instance_name
-  }
-}
-
-# Create ElasticCache Redis
-resource "aws_elasticache_cluster" "redis" {
-  cluster_id = var.redis_cluster_id
-  engine = "redis"
-  engine_version = "7.0"
-  node_type =  var.redis_node_type
-  num_cache_nodes = 1
-  parameter_group_name = "default.redis7"
-
-  tags = {
-    Name = var.redis_cluster_name
   }
 }
 
@@ -38,12 +54,29 @@ resource "tls_private_key" "ssh_key" {
   rsa_bits = 4096
 }
 
+# Save SSH private key on S3 bucket
+resource "aws_s3_bucket_object" "ssh_private_key" {
+  bucket = aws_s3_bucket.bucket.bucket
+  key    = "ssh-keys/${var.deployer_key_name}-key.pem"
+  content = tls_private_key.ssh_key.private_key_pem
+  acl    = "private"  
+}
+
+# Save SSH public key on S3 bucket
+resource "aws_s3_bucket_object" "ssh_public_key" {
+  bucket = aws_s3_bucket.bucket.bucket
+  key    = "ssh-keys/${var.deployer_key_name}-key.pub"
+  content = tls_private_key.ssh_key.public_key_openssh
+  acl    = "private"  
+}
+
+# Associate to EC2
 resource "aws_key_pair" "deployer" {
   key_name = var.deployer_key_name
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
-# Security group to allow SSH and HTTP access
+# Security group to allow SSH and HTTP access on EC2 instance
 resource "aws_security_group" "allow_ssh_http" {
   name_prefix = "allow_ssh_http"
   ingress {
@@ -56,6 +89,13 @@ resource "aws_security_group" "allow_ssh_http" {
   ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+ ingress {
+    from_port   = 6379
+    to_port     = 6379
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -80,7 +120,6 @@ resource "aws_instance" "docker_instance" {
               amazon-linux-extras install docker -y
               service docker start
               usermod -a -G docker ec2-user
-              docker ps
               EOF
 
   # Associate a security group
@@ -96,17 +135,17 @@ output "db_endpoint" {
   value = aws_db_instance.postgres.endpoint
 }
 
-# Output of Redis cluster
-output "redis_endpoint" {
-  value = "${aws_elasticache_cluster.redis.cache_nodes[0].address}:${aws_elasticache_cluster.redis.port}"
-}
-
 # Outputs to show instance IP and SSH key
 output "instance_public_ip" {
   value = aws_instance.docker_instance.public_ip
 }
 
-output "ssh_private_key_pem" {
-  value     = tls_private_key.ssh_key.private_key_pem
-  sensitive = true
+# Outputs for private ssh key
+output "ssh_private_key_url" {
+  value = aws_s3_bucket_object.ssh_private_key.url 
+}
+
+# Outputs for public ssh key
+output "ssh_public_key" {
+  value = aws_s3_bucket_object.ssh_public_key.url 
 }
