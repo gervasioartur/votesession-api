@@ -108,7 +108,7 @@ jobs:
 
             # Run Redis container
             echo "Starting Redis container..."
-            docker run -d --name ${{ vars.SPRING_DATA_REDIS_HOST }} redis:6.0 -p 6379:6379 
+            docker run -d --name ${{ vars.SPRING_DATA_REDIS_HOST }} -p 6379:6379 redis:6.0
 
             # Pull the application image
             echo "Pulling application image"
