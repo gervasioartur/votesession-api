@@ -108,7 +108,7 @@ jobs:
 
             # Run Redis container
             echo "Starting Redis container..."
-            docker run -p 6379:6379 --name ${{ vars.SPRING_DATA_REDIS_HOST }} redis:6.0
+            docker run -p 6379:6379 -d --name ${{ vars.SPRING_DATA_REDIS_HOST }} redis:6.0
 
             # Pull the application image
             echo "Pulling application image"
@@ -116,5 +116,5 @@ jobs:
 
           # Run the application container
             echo "Running application container"
-            docker run -p 8080:8080 "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG"
+            docker run -p 8080:8080 -d "${{ vars.DOCKER_USERNAME }}/${{ vars.APPLICATION_NAME }}:$IMAGE_TAG"
           EOF
