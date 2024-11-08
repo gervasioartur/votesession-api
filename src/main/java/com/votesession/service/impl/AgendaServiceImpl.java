@@ -92,7 +92,7 @@ public class AgendaServiceImpl implements AgendaService {
      * If there's no active voting session, throws BusinessException
      */
     @Override
-    @CacheEvict(value = "voting_results", allEntries = true)
+    // @CacheEvict(value = "voting_results", allEntries = true)
     public void vote(Vote vote) {
         if (!this.userService.isAbleToVote(vote.getUserId()))
             throw new BusinessException("User unable to vote.");
@@ -121,7 +121,7 @@ public class AgendaServiceImpl implements AgendaService {
      * Has responsibility of calculating the voting results,
      */
     @Override
-    @Cacheable(value = "voting_results")
+    // @Cacheable(value = "voting_results")
     public List<VotingResults> readResults() {
         List<Agenda> agendas = this.repository.findAll();
         return agendas.stream()
